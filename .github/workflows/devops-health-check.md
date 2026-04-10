@@ -109,11 +109,13 @@ You are a DevOps health monitoring agent. Your job is to collect repo health sig
 
 ## High-Level Workflow
 
-1. **Data Collection** (deterministic — use API calls and bash tools)
+> ⚠️ **ABSOLUTE PRIORITY**: Steps 4 and 5 (Output + Dispatch) are non-negotiable. Every run MUST call `update-issue` to update the dashboard. A run that collects data but never outputs it is a **total failure**. If you are running low on conversation turns at any point during data collection, **STOP collecting and jump directly to Step 2 → Step 4 → Step 5** with whatever data you have.
+
+1. **Data Collection** (deterministic — use API calls and bash tools) — Priority order: P1–P6, then Q1–Q7, then R1–R5, then I1–I8, then U1–U3. **Stop early if running low on turns.**
 2. **Fingerprint & Diff** (compare against previous run via `cache-memory`)
-3. **Analysis** (LLM-powered: correlate findings, identify root causes, write summary)
-4. **Output** (update pinned issue + post daily comment)
-5. **Triage Dispatch** (dispatch investigation workers for new critical/warning findings)
+3. **Analysis** (LLM-powered: correlate findings, identify root causes, write summary) — Keep brief. Skip if low on turns.
+4. **Output** (update pinned issue + post daily comment) — **MANDATORY**
+5. **Triage Dispatch** (dispatch investigation workers for new critical/warning findings) — **MANDATORY if qualifying findings exist**
 
 ---
 
@@ -131,237 +133,293 @@ Each `plugins/{name}/` directory containing a `plugin.json` is a component. The 
 
 ### 1.2 Pipeline Health (P1–P6)
 
-**P1 — Failed workflow runs on `main` in last 24h:**
-```
-GET /repos/{owner}/{repo}/actions/runs?branch=main&status=failure&per_page=30
-```
-Filter to runs created within the last 24 hours. For each failed run:
-- Extract `workflow_name`, `conclusion`, `job_name`, `failed_step`
-- Fingerprint: `pipeline:{workflow_name}:{job_name}:{failed_step}:{conclusion}`
-- Severity: 🔴 Critical if `evaluation` workflow fails; 🟡 Warning for others
-- **Noise suppression:** Check if the finding matches any pattern in the `known-noise` list from `cache-memory`. If it matches, demote severity to 🔵 Info.
+> ⚠️ **DATA-INTENSIVE SECTION**: This section requires multiple GitHub API calls that return large JSON responses.
+> Use the **batch collection strategy** below: make the API calls, **save results to files** using `jq` to extract only needed fields, then run ONE bash command to compute all findings.
+> This minimizes the number of conversation turns and keeps context small.
 
-**P2 — Cancelled/timed-out runs in last 24h:**
-```
-GET /repos/{owner}/{repo}/actions/runs?branch=main&status=cancelled&per_page=10
-```
-- Fingerprint: `pipeline:{workflow_name}:{job_name}:timeout`
-- Severity: 🟡 Warning
+**Step A — Fetch raw data (3 API calls via GitHub tool):**
 
-**P3 — Evaluation duration trend:**
-```
-GET /repos/{owner}/{repo}/actions/workflows/evaluation.yml/runs?branch=main&per_page=30
-```
-Compute average run duration over the last 14 days.
-- 🟡 Warning if avg > 50 min (83% of 60-min timeout)
-- 🔴 Critical if avg > 55 min
-- Fingerprint: `resource:eval-duration:{bucket}` (bucket = "warning" or "critical")
+1. `GET /repos/{owner}/{repo}/actions/runs?branch=main&status=failure&per_page=30` → Save to `/tmp/p-failed.json`
+2. `GET /repos/{owner}/{repo}/actions/runs?branch=main&status=cancelled&per_page=10` → Save to `/tmp/p-cancelled.json`
+3. `GET /repos/{owner}/{repo}/actions/workflows/evaluation.yml/runs?per_page=100` → Save to `/tmp/p-eval-runs.json`
 
-**P4 — Workflow failure rate (7-day rolling):**
+For each API call, **immediately** use a bash command to extract only needed fields to a compact file. For example, after getting the failed runs response, run:
+```bash
+echo '<paste_json>' | jq '[.workflow_runs[] | select(.created_at > "'$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)'") | {id,name:.name,conclusion,html_url,created_at,run_started_at,updated_at}]' > /tmp/p-failed.json
 ```
-GET /repos/{owner}/{repo}/actions/runs?branch=main&per_page=100
+
+**Step B — Compute all pipeline findings in ONE bash call:**
+
+Run a single bash+jq script that reads the saved files and outputs a compact JSON array of findings:
+
+```bash
+# Process all pipeline data and output findings as compact JSONL
+NOW=$(date -u +%s)
+DAY_AGO=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+
+echo '=== P1: Failed runs ===' 
+cat /tmp/p-failed.json | jq -c '.[] | {fingerprint: ("pipeline:" + .name + "::failure"), severity: (if .name == "evaluation" then "critical" else "warning" end), title: .name, url: .html_url, created: .created_at}'
+
+echo '=== P2: Cancelled runs ==='
+cat /tmp/p-cancelled.json | jq -c '[.workflow_runs[] | select(.created_at > "'$DAY_AGO'") | {fingerprint: ("pipeline:" + .name + "::timeout"), severity: "warning", title: .name, url: .html_url}]'
+
+echo '=== P3-P6: Evaluation metrics ==='
+cat /tmp/p-eval-runs.json | jq -c '{
+  total: (.workflow_runs | length),
+  failures: [.workflow_runs[] | select(.conclusion == "failure")] | length,
+  cancellations: [.workflow_runs[] | select(.conclusion == "cancelled")] | length,
+  successes: [.workflow_runs[] | select(.conclusion == "success")] | length,
+  avg_duration_min: ([.workflow_runs[] | select(.conclusion == "success") | (((.updated_at | fromdateiso8601) - (.run_started_at | fromdateiso8601)) / 60)] | if length > 0 then (add / length | . * 10 | round / 10) else 0 end),
+  recent_failed_urls: [.workflow_runs[] | select(.conclusion == "failure") | .html_url][:5],
+  scheduled_runs: [.workflow_runs[] | select(.event == "schedule")],
+  scheduled_cancelled: [.workflow_runs[] | select(.event == "schedule" and .conclusion == "cancelled")] | length
+}'
 ```
-Group by workflow name, compute success/failure ratio over the last 7 days.
-- 🔵 Info (metric only — reported in trends table, not fingerprinted)
 
-**P5 — Evaluation failure rate across all branches (last 24h):**
-```
-GET /repos/{owner}/{repo}/actions/workflows/evaluation.yml/runs?per_page=100
-```
-Filter to runs created within the last 24 hours across all branches and event types (schedule, pull_request, workflow_dispatch). Paginate if the first page does not cover the full 24h window. Compute:
-- Total runs, failures (conclusion=failure), cancellations (conclusion=cancelled), successes
-- **Overall failure rate** = failures / (failures + successes) — exclude cancelled runs from denominator
-- **Overall non-success rate** = (failures + cancellations) / total
-- Break down failure counts by event type (schedule vs pull_request vs workflow_dispatch)
+Then read the output and classify:
 
-Severity thresholds:
-- 🔴 Critical if overall failure rate > 30%
-- 🟡 Warning if overall failure rate > 15%
-- Fingerprint: `pipeline:evaluation:failure-rate:{bucket}` (bucket = "critical" or "warning")
-
-Also include in the finding details:
-- Failure count by event type (e.g., "10 PR failures, 4 schedule failures")
-- Sample of recent failed run URLs (up to 5) for quick investigation
-- Common failing job names across the failed runs
-
-**P6 — Evaluation scheduled run cancellation rate (last 24h):**
-```
-GET /repos/{owner}/{repo}/actions/workflows/evaluation.yml/runs?branch=main&event=schedule&per_page=100
-```
-Filter to scheduled runs on `main` created within the last 24 hours. Compute:
-- Total scheduled runs, cancelled count, completed count
-- Cancellation rate = cancelled / total
-
-Severity thresholds:
-- 🟡 Warning if cancellation rate > 30% (pipeline frequently doesn't complete within schedule interval)
-- 🔴 Critical if cancellation rate > 60% (majority of scheduled runs never complete)
-- Fingerprint: `pipeline:evaluation:schedule-cancellation:{bucket}` (bucket = "critical" or "warning")
-
-This detects when the evaluation pipeline consistently takes longer than the schedule interval (e.g., runs every 2h but takes >2h to complete), causing the concurrency group to cancel in-flight runs.
+| Check | Fingerprint | Severity Rule |
+|-------|-------------|---------------|
+| P1 — Failed runs (24h) | `pipeline:{workflow_name}:{job_name}:{failed_step}:{conclusion}` | 🔴 if evaluation; 🟡 otherwise. Demote to 🔵 if matches `known-noise` in cache-memory |
+| P2 — Cancelled runs (24h) | `pipeline:{workflow_name}:{job_name}:timeout` | 🟡 Warning |
+| P3 — Eval avg duration | `resource:eval-duration:{bucket}` | 🟡 if avg > 50 min; 🔴 if avg > 55 min |
+| P4 — Workflow failure rate (7d) | (not fingerprinted) | 🔵 Info metric for trends table |
+| P5 — Eval failure rate (24h, all branches) | `pipeline:evaluation:failure-rate:{bucket}` | 🔴 if > 30%; 🟡 if > 15% |
+| P6 — Eval schedule cancellation (24h) | `pipeline:evaluation:schedule-cancellation:{bucket}` | 🔴 if > 60%; 🟡 if > 30% |
 
 ### 1.3 Skill Quality (Q1–Q7)
 
-Fetch benchmark data for each discovered component:
+> ⚠️ **MOST DATA-INTENSIVE SECTION**: This is the biggest context consumer. There are 12 components, each with a benchmark JSON file containing hundreds of entries.
+> **You MUST delegate ALL benchmark analysis to a single bash+jq script.** Do NOT parse benchmark JSON in conversation — it will exhaust your context.
+
+**Step A — Fetch all benchmark data (ONE GitHub tool call per component):**
+
+For each discovered component, fetch its benchmark JSON:
 ```
 GET https://raw.githubusercontent.com/{owner}/{repo}/gh-pages/data/{component}.json
 ```
+After each fetch, **immediately** save the response to `/tmp/{component}.json` using a bash command. Do NOT analyze the content yet. Just save and move to the next component.
 
-**Q1 — Skill inventory overview table:**
-Compile a comprehensive table of all skills combining local discovery with benchmark data. For each skill, classify its health status:
-- **🟢 OK** — Skill has tests, scenarios pass, skilled > vanilla, no anomaly flags
-- **🟡 Warning** — Skill is functional but has issues: timeouts, overfitting, or high variance (stddev > 1.5)
-- **🟡 Low Value** — Some scenarios show skilled ≤ vanilla (but others show uplift)
-- **🔴 No Value** — All scenarios show skilled ≤ vanilla (skill adds nothing)
-- **🔴 Critical** — Skill not activated by the agent (`notActivated` flag)
-- **⚪ Untested** — No test directory, no eval.yaml, or eval.yaml has 0 scenarios
-- **⚪ No Data** — Skill exists locally but has no benchmark data
-
-This table is informational (🔵 Info) and not fingerprinted. It is rendered in the issue body as a dedicated "Skill Inventory" section.
-
-For each skill, compute:
-- **Avg Skilled score**: average of all scenario "Skilled Quality" bench values in the latest entry
-- **Avg Vanilla score**: average of all scenario "Vanilla Quality" bench values in the latest entry
-- **Delta**: Skilled − Vanilla
-- **Scenario count**: number of scenarios with benchmark data
-- **Issue summary**: comma-separated list of issues (timeout, overfitting, no-uplift, high-variance, etc.)
-
-**Q2 — Bench entries with anomaly flags:**
-Scan the latest entry in **both** `entries.Quality` and `entries.Efficiency` arrays. For each bench entry, check for any property beyond the standard `name`/`unit`/`value` fields. Any extra boolean property is an anomaly flag (e.g., `notActivated`, `timedOut`, `testOverfitted`, or future flags).
-- Extract the skill name and scenario from the bench `name` field (format: `"{skill}/{scenario} - {metric}"`)
-- 🔴 Critical if `notActivated` (skill broken)
-- 🟡 Warning for all other flags
-- Fingerprint: `quality:{skill}:{scenario}:{flag-name}`
-- **Deduplicate:** If the same skill/scenario/flag appears in both Quality and Efficiency arrays, report it only once.
-
-**Q3 — Quality regression (>1.0 point drop vs 7-day rolling avg):**
-For each scenario's "Skilled Quality" bench, compare the latest value to the rolling average of all entries from the last 7 calendar days (filter by `date` field).
-- 🔴 Critical if drop > 2.0 points
-- 🟡 Warning if drop > 1.0 points
-- Fingerprint: `quality:{skill}:{scenario}:regressed`
-
-**Q4 — Skilled ≤ Vanilla (skill adds no value):**
-For the latest entry, compare `"{skill}/{scenario} - Skilled Quality"` vs `"{skill}/{scenario} - Vanilla Quality"` bench values.
-- 🟡 Warning if Skilled ≤ Vanilla
-- Fingerprint: `quality:{skill}:{scenario}:no-uplift`
-
-**Q5 — High variance across runs:**
-Compute the standard deviation of `"Skilled Quality"` scores across all entries from the last 7 calendar days.
-- 🟡 Warning if stddev > 1.5
-- Fingerprint: `quality:{skill}:{scenario}:high-variance`
-
-**Q6 — Skills without eval tests:**
+**Step B — Run local discovery for Q6 (ONE bash call):**
+```bash
+# Discover all skills and check test coverage
+for skill_dir in $(find plugins/*/skills/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null); do
+  comp=$(echo "$skill_dir" | cut -d/ -f2)
+  skill=$(basename "$skill_dir")
+  test_dir="tests/$comp/$skill"
+  has_tests="false"
+  if [ -f "$test_dir/eval.yaml" ]; then
+    scenarios=$(grep -c '^  - name:' "$test_dir/eval.yaml" 2>/dev/null || echo 0)
+    [ "$scenarios" -gt 0 ] && has_tests="true"
+  fi
+  echo "{\"component\":\"$comp\",\"skill\":\"$skill\",\"has_tests\":$has_tests}"
+done
 ```
-find plugins/*/skills/ -mindepth 1 -maxdepth 1 -type d
-```
-For each skill directory, check if a corresponding test directory exists under `tests/{component}/{skill-name}/`.
-If the test directory exists, verify that `eval.yaml` exists and contains at least one scenario.
-- 🟡 Warning if no test directory, no eval.yaml, or eval.yaml has no scenarios
-- Fingerprint: `coverage:{skill}:no-tests`
+Save output to `/tmp/skill-coverage.jsonl`.
 
-**Q7 — Benchmark data staleness:**
-Check if the latest entry's `date` timestamp is > 24h old (compare to current time).
-- 🟡 Warning (pipeline may not be publishing)
-- Fingerprint: `quality:benchmark-stale:{component}`
+**Step C — Compute ALL quality findings in ONE bash+jq call:**
+
+This is the critical step. Run a single comprehensive jq script that processes ALL benchmark files at once and outputs compact findings:
+
+```bash
+# Process all 12 benchmark files and output findings as compact JSONL
+NOW_EPOCH=$(date -u +%s)
+SEVEN_DAYS_AGO=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+ONE_DAY_AGO=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+
+for f in /tmp/dotnet*.json; do
+  comp=$(basename "$f" .json)
+  [ ! -s "$f" ] && echo "{\"component\":\"$comp\",\"error\":\"no_data\"}" && continue
+  
+  jq -c --arg comp "$comp" --arg seven_days_ago "$SEVEN_DAYS_AGO" --arg one_day_ago "$ONE_DAY_AGO" '
+    # Extract latest entry
+    (.entries.Quality // []) as $q |
+    (.entries.Efficiency // []) as $e |
+    ($q[-1:][0] // null) as $latest |
+    
+    # Q7: Staleness check
+    (if $latest then
+      (if ($latest.date // "") < $one_day_ago then
+        [{fingerprint: ("quality:benchmark-stale:" + $comp), severity: "warning", check: "Q7", detail: ("Last: " + ($latest.date // "unknown"))}]
+      else [] end)
+    else [{fingerprint: ("quality:benchmark-stale:" + $comp), severity: "warning", check: "Q7", detail: "no entries"}] end) +
+    
+    # Q2: Anomaly flags in latest entry
+    (if $latest then
+      [$latest.benches[]? |
+        . as $b |
+        ((.name // "") | split(" - ")[0] | split("/")) as $parts |
+        ($parts[0] // "") as $skill |
+        ($parts[1] // "") as $scenario |
+        (to_entries | map(select(.key != "name" and .key != "unit" and .key != "value" and .value == true)) | .[]) |
+        {fingerprint: ("quality:" + $skill + ":" + $scenario + ":" + .key),
+         severity: (if .key == "notActivated" then "critical" else "warning" end),
+         check: "Q2", flag: .key, skill: $skill, scenario: $scenario}
+      ] | unique_by(.fingerprint)
+    else [] end) +
+    
+    # Q4: No-uplift (Skilled <= Vanilla)
+    (if $latest then
+      [($latest.benches // []) as $benches |
+       $benches[] |
+       select(.name | test("Skilled Quality$")) |
+       .name as $sname | .value as $sval |
+       ($sname | sub("Skilled Quality$"; "Vanilla Quality")) as $vname |
+       ($benches[] | select(.name == $vname) | .value) as $vval |
+       select($sval <= $vval) |
+       (($sname | split(" - ")[0] | split("/")) | {skill: .[0], scenario: .[1]}) |
+       {fingerprint: ("quality:" + .skill + ":" + .scenario + ":no-uplift"),
+        severity: "warning", check: "Q4", skill: .skill, scenario: .scenario,
+        skilled: $sval, vanilla: $vval}
+      ]
+    else [] end) +
+    
+    # Q1: Skill inventory summary (informational)
+    (if $latest then
+      [{check: "Q1", component: $comp, date: $latest.date,
+        skills: [$latest.benches[]? | select(.name | test("Skilled Quality$")) |
+          (.name | split(" - ")[0] | split("/")[0]) ] | unique}]
+    else [{check: "Q1", component: $comp, skills: []}] end)
+  ' "$f" 2>/dev/null || echo "{\"component\":\"$comp\",\"error\":\"parse_failed\"}"
+done
+```
+
+Read the compact JSONL output and use it directly to build the findings list. **Do NOT re-examine the raw benchmark files.** The script output contains everything needed for the issue body.
+
+**Fingerprint reference for Q1–Q7:**
+
+| Check | Fingerprint | Severity Rule |
+|-------|-------------|---------------|
+| Q1 — Skill inventory | (not fingerprinted — informational table) | 🔵 Info |
+| Q2 — Anomaly flags | `quality:{skill}:{scenario}:{flag-name}` | 🔴 if `notActivated`; 🟡 otherwise |
+| Q3 — Regression (>1pt drop vs 7d avg) | `quality:{skill}:{scenario}:regressed` | 🔴 if drop > 2.0; 🟡 if > 1.0 |
+| Q4 — Skilled ≤ Vanilla | `quality:{skill}:{scenario}:no-uplift` | 🟡 Warning |
+| Q5 — High variance (7d stddev > 1.5) | `quality:{skill}:{scenario}:high-variance` | 🟡 Warning |
+| Q6 — No eval tests | `coverage:{skill}:no-tests` | 🟡 Warning |
+| Q7 — Benchmark stale (>24h) | `quality:benchmark-stale:{component}` | 🟡 Warning |
+
+Note: Q3 and Q5 require comparing across multiple entries (7-day window). The jq script above covers Q1, Q2, Q4, Q7. For Q3 and Q5, extend the script to filter entries by date and compute rolling averages/stddev, OR skip them if the script is already complex enough — they are lower-priority findings.
 
 ### 1.4 PR & Review Health (R1–R5)
 
+> ⚠️ **CONTEXT-SAVING STRATEGY**: Fetch the PR list ONCE and process locally.
+> **Skip R3 (check runs per PR)** — it requires N additional API calls (one per PR) and is low-value. Only compute it if you have ample remaining turns.
+
+**Step A — Fetch open PRs (1 API call):**
 ```
 GET /repos/{owner}/{repo}/pulls?state=open&sort=created&direction=asc&per_page=50
 ```
-
-**R1 — PRs open > 7 days without review:**
-Filter by `created_at` older than 7 days, then check review count (0 reviews).
-- 🟡 Warning
-- Fingerprint: `pr:{pr_number}:no-review`
-
-**R2 — PRs open > 14 days (any state of review):**
-- 🟡 Warning (possibly abandoned)
-- Fingerprint: `pr:{pr_number}:stale`
-
-**R3 — PRs with all checks failing:**
-For each open PR, check its check runs. If all checks are failing:
-- 🟡 Warning
-- Fingerprint: `pr:{pr_number}:failing-checks`
-
-**R4 — Draft PRs with no activity > 7 days:**
-Filter for `draft=true` and `updated_at` older than 7 days.
-- 🔵 Info
-- Fingerprint: `pr:{pr_number}:stale-draft`
-
-**R5 — PR merge velocity trend:**
+Save to `/tmp/prs-open.json` immediately using bash+jq to extract only needed fields:
+```bash
+echo '<paste_json>' | jq -c '[.[] | {number, title, created_at, updated_at, draft, user: .user.login, html_url}]' > /tmp/prs-open.json
 ```
-GET /repos/{owner}/{repo}/pulls?state=closed&sort=updated&direction=desc&per_page=50
+
+**Step B — Compute PR findings in ONE bash call:**
+```bash
+NOW=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+SEVEN_DAYS=$(date -u -d '7 days ago' +%Y-%m-%dT%H:%M:%SZ)
+FOURTEEN_DAYS=$(date -u -d '14 days ago' +%Y-%m-%dT%H:%M:%SZ)
+
+jq -c --arg seven "$SEVEN_DAYS" --arg fourteen "$FOURTEEN_DAYS" '
+  [.[] |
+    # R1: Open > 7 days (approximate, skip review check to save API calls)
+    (if (.created_at < $seven and .draft != true) then
+      {fingerprint: ("pr:" + (.number|tostring) + ":stale"), severity: "warning",
+       check: "R1/R2", number: .number, title: .title, url: .html_url, age_bucket: "7d+"}
+    else null end),
+    # R2: Open > 14 days
+    (if (.created_at < $fourteen) then
+      {fingerprint: ("pr:" + (.number|tostring) + ":stale"), severity: "warning",
+       check: "R2", number: .number, title: .title, url: .html_url, age_bucket: "14d+"}
+    else null end),
+    # R4: Stale drafts
+    (if (.draft == true and .updated_at < $seven) then
+      {fingerprint: ("pr:" + (.number|tostring) + ":stale-draft"), severity: "info",
+       check: "R4", number: .number, title: .title, url: .html_url}
+    else null end)
+  ] | map(select(. != null)) | unique_by(.fingerprint)
+' /tmp/prs-open.json
 ```
-Count merged PRs per day over the last 7 days.
-- 🔵 Info (metric only — reported in trends table, not fingerprinted)
+
+**Fingerprint reference:**
+
+| Check | Fingerprint | Severity |
+|-------|-------------|----------|
+| R1 — Open > 7d no review | `pr:{number}:no-review` | 🟡 Warning |
+| R2 — Open > 14d | `pr:{number}:stale` | 🟡 Warning |
+| R3 — All checks failing | `pr:{number}:failing-checks` | 🟡 Warning (SKIP unless ample turns remain) |
+| R4 — Stale draft > 7d | `pr:{number}:stale-draft` | 🔵 Info |
+| R5 — Merge velocity | (not fingerprinted — trends metric) | 🔵 Info |
 
 ### 1.5 Infrastructure Checks (I1–I8)
 
-**I1 — Missing CODEOWNERS:**
-```
-GET /repos/{owner}/{repo}/contents/CODEOWNERS
-```
-If 404, also check `.github/CODEOWNERS` and `docs/CODEOWNERS`.
-- 🟡 Warning if none found
-- Fingerprint: `infra:no-codeowners`
+> ⚠️ **LOW PRIORITY**: These checks rarely change. If you are past 60% of your turns, **skip this entire section** and note "⏭️ Infrastructure checks skipped (turn budget)" in the output.
 
-**I2 — Missing Dependabot config:**
-```
-GET /repos/{owner}/{repo}/contents/.github/dependabot.yml
-```
-- 🟡 Warning if 404
-- Fingerprint: `infra:no-dependabot`
+**Compute ALL infrastructure findings in ONE bash call** (no API calls needed — all local):
 
-**I3 — Relaxed skill validation:**
-Check if `.github/workflows/validate-skills.yml` contains `fail-on-warning: false`.
-- 🟡 Warning
-- Fingerprint: `infra:relaxed-skill-validation`
+```bash
+# I1: CODEOWNERS
+if [ -f CODEOWNERS ] || [ -f .github/CODEOWNERS ] || [ -f docs/CODEOWNERS ]; then
+  echo '{"check":"I1","status":"ok"}'
+else
+  echo '{"check":"I1","fingerprint":"infra:no-codeowners","severity":"warning"}'
+fi
 
-**I4 — Verdict-warn-only mode:**
-Check if `.github/workflows/evaluation.yml` contains `--verdict-warn-only`.
-- 🔵 Info
-- Fingerprint: `infra:verdict-warn-only`
+# I2: Dependabot
+if [ -f .github/dependabot.yml ]; then
+  echo '{"check":"I2","status":"ok"}'
+else
+  echo '{"check":"I2","fingerprint":"infra:no-dependabot","severity":"warning"}'
+fi
 
-**I5 — Dashboard deployment health:**
-```
-GET /repos/{owner}/{repo}/pages
-```
-Check last deployment status.
-- 🔴 Critical if deployment failed
-- Fingerprint: `infra:pages-deployment-failed`
+# I3: Relaxed validation
+if grep -q 'fail-on-warning: false' .github/workflows/validate-skills.yml 2>/dev/null; then
+  echo '{"check":"I3","fingerprint":"infra:relaxed-skill-validation","severity":"warning"}'
+fi
 
-**I6 — Third-party action version drift:**
-Scan workflow YAML files for non-`actions/*` references. Flag those pinned to tags instead of SHAs.
-- 🔵 Info
-- Fingerprint: `infra:unpinned-action:{action_name}`
+# I4: Verdict-warn-only
+if grep -q 'verdict-warn-only' .github/workflows/evaluation.yml 2>/dev/null; then
+  echo '{"check":"I4","fingerprint":"infra:verdict-warn-only","severity":"info"}'
+fi
 
-**I7 — Orphan skills (not registered in any plugin):**
-Discover all skill directories on disk:
-```
-find plugins/*/skills/ -mindepth 1 -maxdepth 1 -type d
-```
-For each skill directory found, verify that its parent plugin directory contains a valid `plugin.json` with a `skills` field that resolves to a path containing the skill. Specifically:
-- Parse `plugins/{component}/plugin.json` and resolve the `skills` field (e.g., `"./skills/"`) relative to the plugin directory.
-- Confirm the skill directory is under the resolved skills path.
-- If a skill directory exists under `plugins/*/skills/` but the parent `plugins/*/` has no `plugin.json`, or the `plugin.json` has no `skills` field, the skill is orphaned.
-- Also scan for any stray skill-like directories outside the standard `plugins/*/skills/` structure (e.g., leftover directories in `plugins/*/` that contain `.md` prompt files but are not under `skills/` or `agents/`).
-- 🟡 Warning for each orphan skill found
-- Fingerprint: `infra:orphan-skill:{component}:{skill_name}`
+# I7: Orphan skills
+for skill_dir in $(find plugins/*/skills/ -mindepth 1 -maxdepth 1 -type d 2>/dev/null); do
+  comp=$(echo "$skill_dir" | cut -d/ -f2)
+  skill=$(basename "$skill_dir")
+  if [ ! -f "plugins/$comp/plugin.json" ]; then
+    echo "{\"check\":\"I7\",\"fingerprint\":\"infra:orphan-skill:$comp:$skill\",\"severity\":\"warning\"}"
+  fi
+done
 
-**I8 — Orphan plugins (not listed in marketplace.json):**
-Compare the set of plugin directories on disk against the marketplace registry:
+# I8: Orphan plugins
+if [ -f .github/plugin/marketplace.json ]; then
+  MARKETPLACE_SOURCES=$(jq -r '.plugins[].source // empty' .github/plugin/marketplace.json 2>/dev/null | sort)
+  for pjson in $(find plugins -maxdepth 2 -name plugin.json); do
+    pdir=$(dirname "$pjson")
+    pname=$(basename "$pdir")
+    if ! echo "$MARKETPLACE_SOURCES" | grep -q "$pname"; then
+      echo "{\"check\":\"I8\",\"fingerprint\":\"infra:orphan-plugin:$pname\",\"severity\":\"warning\"}"
+    fi
+  done
+fi
 ```
-find plugins -maxdepth 2 -type f -name plugin.json
-cat .github/plugin/marketplace.json | jq -r '.plugins[].source'
-```
-For each plugin directory under `plugins/` that contains a `plugin.json`:
-- Derive the plugin directory path from the actual location of `plugin.json` on disk (for example, if `plugin.json` is at `plugins/foo/plugin.json`, the directory is `plugins/foo/`), and separately read the plugin display name from its `name` field.
-- Check if a matching entry exists in `.github/plugin/marketplace.json` where `plugins[].source` resolves to the same directory path (e.g., `"./plugins/foo"`), comparing using the directory derived from the filesystem rather than the `name` field.
-- If no entry in marketplace.json points to that directory, the plugin is orphaned and will not be discoverable by consumers. Optionally, also emit a separate finding if the `plugin.json` `name` field does not match the directory basename (e.g., `plugins/foo/` with `name: "bar"`).
-- 🟡 Warning for each orphan plugin found
-- Fingerprint: `infra:orphan-plugin:{directory_basename}` (uses on-disk directory name, not the `name` field)
+
+For **I5 (dashboard deployment)** and **I6 (action version drift)**: these require API calls or extensive YAML scanning. **Skip them** unless you have ample remaining turns. They are low-severity (🔵 Info / 🔴 rare) and rarely change.
+
+| Check | Fingerprint | Severity |
+|-------|-------------|----------|
+| I1 — No CODEOWNERS | `infra:no-codeowners` | 🟡 |
+| I2 — No Dependabot | `infra:no-dependabot` | 🟡 |
+| I3 — Relaxed validation | `infra:relaxed-skill-validation` | 🟡 |
+| I4 — Verdict-warn-only | `infra:verdict-warn-only` | 🔵 |
+| I5 — Pages deployment | `infra:pages-deployment-failed` | 🔴 (skip if low on turns) |
+| I6 — Unpinned actions | `infra:unpinned-action:{name}` | 🔵 (skip if low on turns) |
+| I7 — Orphan skills | `infra:orphan-skill:{comp}:{skill}` | 🟡 |
+| I8 — Orphan plugins | `infra:orphan-plugin:{dirname}` | 🟡 |
 
 ### 1.6 Resource Usage (U1–U3)
+
+> ⚠️ **LOWEST PRIORITY**: Skip entirely if past 50% of your turns. These are Info-level metrics only.
 
 **U1 — Daily compute hours:**
 Sum all workflow run durations from the last 24h.
@@ -596,14 +654,22 @@ Before finishing, verify:
 
 ## Guidelines
 
-- **Time budget**: You have a 60-minute timeout. Prioritize reaching Steps 4 and 5 (issue update + dispatch). Do NOT write intermediate scripts or analysis files. Work through each check, collect findings in memory, and proceed directly to output. Aim to complete data collection (Step 1) within 30 minutes.
-- **Efficiency**: Process API responses in memory. Do NOT create Python/bash scripts to analyze data — parse JSON directly using `jq` or inline analysis. Do NOT write intermediate files unless explicitly required by the output format.
+- **CRITICAL — You MUST call a safe output tool**: Every run MUST end with at least one safe output call (`update-issue`, `dispatch-workflow`, or `noop`). A run that produces zero safe outputs is a total failure — the `detection` and `safe_outputs` jobs will be skipped and all work is lost. Plan your turn budget to ALWAYS reserve capacity for the output phase.
+- **CRITICAL — Turn budget and progressive reduction**: You have limited conversation turns. Track your progress and apply these hard gates:
+  - After completing Steps 1.1–1.2 (components + pipeline health): assess remaining capacity. If you have used more than 40% of your turns, **skip Steps 1.5 (Infrastructure) and 1.6 (Resource Usage)** entirely — mark them as "⏭️ Skipped (turn budget)" in the output.
+  - After completing Step 1.3 (skill quality): If you have used more than 60% of your turns, **skip Step 1.4 (PR health)** — mark as skipped.
+  - After completing Step 2 (fingerprint & diff): **Immediately proceed to Steps 4 and 5**. Do NOT do any additional analysis if you are running low on turns.
+  - **Never spend more than half your total turns on data collection.** When in doubt, emit a partial report rather than no report.
+- **Time budget**: You have a 60-minute timeout. Prioritize reaching Steps 4 and 5 (issue update + dispatch). Aim to complete data collection (Step 1) within 30 minutes.
+- **CRITICAL — Use bash+jq for ALL data-intensive processing**: Each data collection section (P1–P6, Q1–Q7, R1–R5, I1–I8) includes bash+jq scripts that compute findings in a single tool call. **You MUST use these scripts** rather than parsing API responses inline in conversation. The scripts save API responses to `/tmp/` files and process them locally, outputting compact JSONL findings. This minimizes conversation turns and context consumption.
+- **Efficiency — Save API responses immediately**: After each GitHub API call, immediately save the response to a `/tmp/` file using a bash command that extracts only the needed fields via `jq`. Do NOT hold large API responses in the conversation context. Fetch → save → move on.
+- **Efficiency — Previous issue body**: When reading the previous issue body for diffing, extract ONLY the fingerprints and section structure needed for the diff. Do NOT analyze the full investigation comments or attempt to parse the detailed content of existing findings. The issue body can be very large (60k+ chars) — processing it in detail wastes turns.
 - **CRITICAL — Safe output body must be inline**: When calling `update-issue`, the `body` field must contain the **complete, literal issue body text**. NEVER write the body to a file and use a shell reference like `$(cat file.txt)` — safe outputs are literal JSON strings, not shell-evaluated. Pass the body directly as the string value.
 - **CRITICAL — Investigation Results section is MANDATORY**: The `## 🔍 Investigation Results` section MUST always appear in the issue body, even if no investigations were dispatched (in that case, render the section with the table header and zero data rows). The downstream grooming workflow depends on this section to link investigation results. Never omit it. Never inline investigation status elsewhere (e.g., inside the New Findings section). The section must appear **exactly** between the `## 🆕 New Findings` section and the `## ✅ Resolved` section.
 - **Be data-driven**: Include specific numbers, durations, percentages, and links.
 - **Be precise with fingerprints**: Use the exact fingerprint formulas from the knowledge file. Consistency is critical — the same finding MUST produce the same fingerprint across runs.
 - **First run handling**: If `cache-memory` has no previous state, note: "⚠️ This is the first health check run. All findings appear as new. Diff will resume from next run."
-- **Graceful degradation**: If an API call fails, skip that check category and note the skip in the output. Don't fail the entire workflow.
+- **Graceful degradation**: If an API call fails, skip that check category and note the skip in the output. Don't fail the entire workflow. If you are running low on turns/context, skip remaining data collection and produce the report with whatever data you have — a partial report is infinitely better than no report.
 - **Noise awareness**: Demote known-noise findings (matching patterns in `cache-memory` `known-noise` list) to 🔵 Info severity, but still show them in the output for audit.
 - **Issue body limit**: Keep under 60k characters. Truncate EXISTING section if needed.
 - **Links everywhere**: Every finding should include at least one actionable link (to the run, PR, config file, etc.).
