@@ -540,6 +540,7 @@ public static class AgentRunner
         string agentOutput = "";
         var startTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         bool timedOut = false;
+        string? sdkSessionId = null;
 
         try
         {
@@ -551,6 +552,8 @@ public static class AgentRunner
                 await BuildSessionConfig(options.Skill, options.PluginRoot, options.Model, workDir, options.McpServers,
                     options.AdditionalSkills, options.Log, options.Verbose, options.SessionsDir, options.SessionId,
                     options.Agent, options.AdditionalAgents));
+
+            sdkSessionId = session.SessionId;
 
             var done = new TaskCompletionSource();
             var effectiveTimeout = options.Scenario.Timeout;
@@ -729,6 +732,41 @@ public static class AgentRunner
         var wallTimeMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - startTime;
         var metrics = MetricsCollector.CollectMetrics(events, agentOutput, wallTimeMs, workDir);
         metrics.TimedOut = timedOut;
+
+        // Copy events.jsonl from CLI's default session-state location into the
+        // configDir so the build-replay-sessions pipeline can find it.
+        // CLI >= 1.0.17 writes events.jsonl to ~/.copilot/session-state/<id>/
+        // instead of the configDir, so we need to salvage it.
+        if (options.SessionsDir is not null && sdkSessionId is not null)
+        {
+            try
+            {
+                var homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                var cliEventLog = Path.Combine(homeDir, ".copilot", "session-state", sdkSessionId, "events.jsonl");
+                var configDir = Path.Combine(options.SessionsDir, options.SessionId ?? sdkSessionId);
+
+                if (File.Exists(cliEventLog))
+                {
+                    // Copy to configDir root so recursive search finds it
+                    var destPath = Path.Combine(configDir, "events.jsonl");
+                    File.Copy(cliEventLog, destPath, overwrite: true);
+                    if (options.Verbose)
+                        (options.Log ?? (m => Console.Error.WriteLine(m)))($"      📋 Copied events.jsonl ({new FileInfo(destPath).Length} bytes)");
+                }
+                else
+                {
+                    // Also check inside configDir/session-state/<id>/ (CLI <= 1.0.10 path)
+                    var legacyPath = Path.Combine(configDir, "session-state", sdkSessionId, "events.jsonl");
+                    if (File.Exists(legacyPath) && options.Verbose)
+                        (options.Log ?? (m => Console.Error.WriteLine(m)))($"      📋 events.jsonl found at legacy path");
+                }
+            }
+            catch
+            {
+                // Non-fatal — session data is a nice-to-have, don't fail the evaluation
+            }
+        }
+
         return metrics;
     }
 
