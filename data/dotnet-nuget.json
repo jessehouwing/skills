@@ -1,185 +1,8 @@
 {
-  "lastUpdate": 1776740434992,
+  "lastUpdate": 1776827240012,
   "repoUrl": "",
   "entries": {
     "Efficiency": [
-      {
-        "model": "claude-opus-4.6",
-        "date": 1775615757214,
-        "benches": [
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Time",
-            "unit": "seconds",
-            "value": 57.9
-          },
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 93091.0
-          },
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Time",
-            "unit": "seconds",
-            "value": 40.5
-          },
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 75428.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Time",
-            "unit": "seconds",
-            "value": 243.6
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 254201.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Time",
-            "unit": "seconds",
-            "value": 132.7
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 152933.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Time",
-            "unit": "seconds",
-            "value": 214.3
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 238575.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Time",
-            "unit": "seconds",
-            "value": 217.3
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 259104.0
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Skilled Time",
-            "unit": "seconds",
-            "value": 94.3
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 197800.0
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Plugin Time",
-            "unit": "seconds",
-            "value": 97.6
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 213770.0
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Time",
-            "unit": "seconds",
-            "value": 314.7
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 250709.0
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Time",
-            "unit": "seconds",
-            "value": 320.1
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 245939.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Time",
-            "unit": "seconds",
-            "value": 359.5
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 348045.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Time",
-            "unit": "seconds",
-            "value": 313.4
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 287554.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Time",
-            "unit": "seconds",
-            "value": 353.7
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 263943.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Time",
-            "unit": "seconds",
-            "value": 356.6
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 284544.0
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Time",
-            "unit": "seconds",
-            "value": 289.1
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Tokens In",
-            "unit": "tokens",
-            "value": 397208.0
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Time",
-            "unit": "seconds",
-            "value": 313.3
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Tokens In",
-            "unit": "tokens",
-            "value": 459501.0
-          }
-        ],
-        "commit": {
-          "id": "42e29303b437ebbf8dc9d1b081ac8ddd93bc1e82",
-          "message": "Add coverage-analysis skill to dotnet-test plugin (#499)",
-          "url": "https://github.com/dotnet/skills/commit/42e29303b437ebbf8dc9d1b081ac8ddd93bc1e82",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Cathy Sullivan"
-          },
-          "timestamp": "2026-04-07T16:27:11+00:00"
-        },
-        "tool": "customSmallerIsBetter"
-      },
       {
         "tool": "customSmallerIsBetter",
         "commit": {
@@ -2293,146 +2116,186 @@
             "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Tokens In"
           }
         ]
+      },
+      {
+        "commit": {
+          "timestamp": "2026-04-21T17:10:25+00:00",
+          "url": "https://github.com/dotnet/skills/commit/8651264f12f8984da525262224d9f2e58bfc9dbb",
+          "message": "Fix skill activation for exit code 8 scenario (#567)",
+          "id": "8651264f12f8984da525262224d9f2e58bfc9dbb",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "Amaury Levé"
+          }
+        },
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "value": 39.1,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Time"
+          },
+          {
+            "value": 98647.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Tokens In"
+          },
+          {
+            "value": 38.1,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Time"
+          },
+          {
+            "value": 84434.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Tokens In"
+          },
+          {
+            "value": 113.4,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Time"
+          },
+          {
+            "value": 97554.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Tokens In"
+          },
+          {
+            "value": 154.7,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Time"
+          },
+          {
+            "value": 142681.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Tokens In"
+          },
+          {
+            "value": 136.9,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Time"
+          },
+          {
+            "value": 127801.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Tokens In"
+          },
+          {
+            "value": 160.0,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Time"
+          },
+          {
+            "value": 171469.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Tokens In"
+          },
+          {
+            "value": 85.7,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert single project to CPM - Skilled Time"
+          },
+          {
+            "value": 156294.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert single project to CPM - Skilled Tokens In"
+          },
+          {
+            "value": 135.3,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert single project to CPM - Plugin Time"
+          },
+          {
+            "value": 225568.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert single project to CPM - Plugin Tokens In"
+          },
+          {
+            "value": 171.9,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Time"
+          },
+          {
+            "value": 191686.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Tokens In"
+          },
+          {
+            "value": 199.8,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Time"
+          },
+          {
+            "value": 231705.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Tokens In"
+          },
+          {
+            "value": 195.5,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Time"
+          },
+          {
+            "value": 200061.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Tokens In"
+          },
+          {
+            "value": 340.4,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Time"
+          },
+          {
+            "value": 296998.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Tokens In"
+          },
+          {
+            "value": 91.3,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Time"
+          },
+          {
+            "value": 95636.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Tokens In"
+          },
+          {
+            "value": 262.9,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Time"
+          },
+          {
+            "value": 151093.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Tokens In"
+          },
+          {
+            "value": 359.9,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Time"
+          },
+          {
+            "value": 444950.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Tokens In"
+          },
+          {
+            "value": 309.3,
+            "unit": "seconds",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Time"
+          },
+          {
+            "value": 395377.0,
+            "unit": "tokens",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Tokens In"
+          }
+        ],
+        "model": "claude-opus-4.6",
+        "date": 1776827240012
       }
     ],
     "Quality": [
-      {
-        "model": "claude-opus-4.6",
-        "date": 1775615757214,
-        "benches": [
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 2.799999952316284
-          },
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 6.0
-          },
-          {
-            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 2.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 5.599999904632568
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 4.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 4.0
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 5.599999904632568
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 4.800000190734863
-          },
-          {
-            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 2.799999952316284
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 10.0
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 9.600000381469727
-          },
-          {
-            "name": "convert-to-cpm/Convert single project to CPM - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 4.0
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 9.600000381469727
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 9.600000381469727
-          },
-          {
-            "name": "convert-to-cpm/Convert multi-project solution to CPM - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 5.599999904632568
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 8.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 7.199999809265137
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 5.199999809265137
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 8.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 8.0
-          },
-          {
-            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 4.400000095367432
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Quality",
-            "unit": "Score (0-10)",
-            "value": 8.0
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Quality",
-            "unit": "Score (0-10)",
-            "value": 6.800000190734863
-          },
-          {
-            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Vanilla Quality",
-            "unit": "Score (0-10)",
-            "value": 6.0
-          }
-        ],
-        "commit": {
-          "id": "42e29303b437ebbf8dc9d1b081ac8ddd93bc1e82",
-          "message": "Add coverage-analysis skill to dotnet-test plugin (#499)",
-          "url": "https://github.com/dotnet/skills/commit/42e29303b437ebbf8dc9d1b081ac8ddd93bc1e82",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Cathy Sullivan"
-          },
-          "timestamp": "2026-04-07T16:27:11+00:00"
-        },
-        "tool": "customBiggerIsBetter"
-      },
       {
         "tool": "customBiggerIsBetter",
         "commit": {
@@ -3974,6 +3837,143 @@
             "unit": "Score (0-10)"
           }
         ]
+      },
+      {
+        "commit": {
+          "timestamp": "2026-04-21T17:10:25+00:00",
+          "url": "https://github.com/dotnet/skills/commit/8651264f12f8984da525262224d9f2e58bfc9dbb",
+          "message": "Fix skill activation for exit code 8 scenario (#567)",
+          "id": "8651264f12f8984da525262224d9f2e58bfc9dbb",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "Amaury Levé"
+          }
+        },
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "value": 4.800000190734863,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Skilled Quality"
+          },
+          {
+            "value": 6.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Plugin Quality"
+          },
+          {
+            "value": 4.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Decline CPM conversion for packages.config project - Vanilla Quality"
+          },
+          {
+            "value": 3.5999999046325684,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Skilled Quality"
+          },
+          {
+            "value": 4.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Plugin Quality"
+          },
+          {
+            "value": 4.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages with version conflicts - Vanilla Quality"
+          },
+          {
+            "value": 2.799999952316284,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Skilled Quality"
+          },
+          {
+            "value": 3.200000047683716,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Plugin Quality"
+          },
+          {
+            "value": 2.799999952316284,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Recommend CPM when updating packages in a complex repository - Vanilla Quality"
+          },
+          {
+            "value": 6.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert single project to CPM - Skilled Quality"
+          },
+          {
+            "value": 10.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert single project to CPM - Plugin Quality"
+          },
+          {
+            "value": 4.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert single project to CPM - Vanilla Quality"
+          },
+          {
+            "value": 7.599999904632568,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Skilled Quality"
+          },
+          {
+            "value": 10.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Plugin Quality"
+          },
+          {
+            "value": 6.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert multi-project solution to CPM - Vanilla Quality"
+          },
+          {
+            "value": 4.800000190734863,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Skilled Quality"
+          },
+          {
+            "value": 7.199999809265137,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Plugin Quality"
+          },
+          {
+            "value": 3.200000047683716,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with MSBuild property versions to CPM - Vanilla Quality"
+          },
+          {
+            "value": 4.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Skilled Quality"
+          },
+          {
+            "value": 4.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Plugin Quality"
+          },
+          {
+            "value": 4.400000095367432,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert solution with version conflicts to CPM - Vanilla Quality"
+          },
+          {
+            "value": 7.599999904632568,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Skilled Quality"
+          },
+          {
+            "value": 8.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Plugin Quality"
+          },
+          {
+            "value": 6.0,
+            "unit": "Score (0-10)",
+            "name": "convert-to-cpm/Convert complex repository with multiple CPM challenges - Vanilla Quality"
+          }
+        ],
+        "model": "claude-opus-4.6",
+        "date": 1776827240012
       }
     ]
   }
