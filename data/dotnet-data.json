@@ -2,96 +2,6 @@
   "entries": {
     "Efficiency": [
       {
-        "benches": [
-          {
-            "value": 14.6,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time",
-            "overfitting": "moderate",
-            "unit": "seconds",
-            "overfittingScore": 0.28
-          },
-          {
-            "value": 23213.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In",
-            "overfitting": "moderate",
-            "unit": "tokens",
-            "overfittingScore": 0.28
-          },
-          {
-            "value": 18.2,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time",
-            "overfitting": "moderate",
-            "unit": "seconds",
-            "overfittingScore": 0.28
-          },
-          {
-            "value": 25216.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In",
-            "overfitting": "moderate",
-            "unit": "tokens",
-            "overfittingScore": 0.28
-          }
-        ],
-        "tool": "customSmallerIsBetter",
-        "date": 1775957286921,
-        "model": "claude-opus-4.6",
-        "commit": {
-          "message": "Add Reviewer Teams (#323)",
-          "url": "https://github.com/dotnet/skills/commit/08ff14b0097776933183fb7c709fe94b70a29270",
-          "timestamp": "2026-04-11T07:27:19+02:00",
-          "id": "08ff14b0097776933183fb7c709fe94b70a29270",
-          "author": {
-            "name": "Devin Breshears",
-            "username": "JanKrivanek"
-          }
-        }
-      },
-      {
-        "commit": {
-          "message": "Simplify the focus of devops health workflows (#521)",
-          "id": "70e2d3b3339a6126c081540ada603de14e5a9163",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Jan Krivanek"
-          },
-          "timestamp": "2026-04-13T17:39:20+02:00",
-          "url": "https://github.com/dotnet/skills/commit/70e2d3b3339a6126c081540ada603de14e5a9163"
-        },
-        "model": "claude-opus-4.6",
-        "date": 1776135652005,
-        "tool": "customSmallerIsBetter",
-        "benches": [
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time",
-            "overfittingScore": 0.29,
-            "value": 15.0,
-            "unit": "seconds",
-            "overfitting": "moderate"
-          },
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In",
-            "overfittingScore": 0.29,
-            "value": 22881.0,
-            "unit": "tokens",
-            "overfitting": "moderate"
-          },
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time",
-            "overfittingScore": 0.29,
-            "value": 16.0,
-            "unit": "seconds",
-            "overfitting": "moderate"
-          },
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In",
-            "overfittingScore": 0.29,
-            "value": 32719.0,
-            "unit": "tokens",
-            "overfitting": "moderate"
-          }
-        ]
-      },
-      {
         "tool": "customSmallerIsBetter",
         "model": "claude-opus-4.6",
         "benches": [
@@ -119,7 +29,7 @@
         "commit": {
           "id": "e6f416848c6abb9b972f6043dd6c3e721b8d8e24",
           "message": "Fix the repo path traversal check (#525)",
-          "timestamp": "2026-04-14T18:52:02+02:00",
+          "timestamp": "2026-04-14T16:52:02+00:00",
           "url": "https://github.com/dotnet/skills/commit/e6f416848c6abb9b972f6043dd6c3e721b8d8e24",
           "author": {
             "username": "JanKrivanek",
@@ -134,7 +44,7 @@
           "id": "9f2c53f68e0450fa0cd2f52c3023bb23e65d46bf",
           "url": "https://github.com/dotnet/skills/commit/9f2c53f68e0450fa0cd2f52c3023bb23e65d46bf",
           "message": "Fix the DevOps health dashboard grooming (#529)",
-          "timestamp": "2026-04-15T19:01:40+02:00",
+          "timestamp": "2026-04-15T17:01:40+00:00",
           "author": {
             "username": "JanKrivanek",
             "name": "Jan Krivanek"
@@ -175,7 +85,7 @@
       },
       {
         "commit": {
-          "timestamp": "2026-04-16T19:31:55+02:00",
+          "timestamp": "2026-04-16T17:31:55+00:00",
           "url": "https://github.com/dotnet/skills/commit/dd37cd3bb65b219966b44c3f5d8c0a402cd28ff6",
           "message": "Add skill coverage measurement tool (#509)",
           "author": {
@@ -253,7 +163,7 @@
         ],
         "commit": {
           "id": "f46275e64e0f8a82ab0187d0c1f3be273e89de7a",
-          "timestamp": "2026-04-17T20:29:24+02:00",
+          "timestamp": "2026-04-17T18:29:24+00:00",
           "message": "Add evaluation tests for test-migration and test-quality-auditor agents (#543)",
           "author": {
             "name": "Amaury Lev├⌐",
@@ -271,7 +181,7 @@
             "username": "JanKrivanek",
             "name": "Amaury Lev├⌐"
           },
-          "timestamp": "2026-04-20T21:39:40+02:00",
+          "timestamp": "2026-04-20T19:39:40+00:00",
           "url": "https://github.com/dotnet/skills/commit/96489b425e50bd4857dd1a1bd492399186fd5309",
           "message": "eval(dotnet-test): add evaluations for dotnet-test-frameworks skill (#563)",
           "id": "96489b425e50bd4857dd1a1bd492399186fd5309"
@@ -310,7 +220,7 @@
       },
       {
         "commit": {
-          "timestamp": "2026-04-21T19:10:25+02:00",
+          "timestamp": "2026-04-21T17:10:25+00:00",
           "url": "https://github.com/dotnet/skills/commit/8651264f12f8984da525262224d9f2e58bfc9dbb",
           "message": "Fix skill activation for exit code 8 scenario (#567)",
           "id": "8651264f12f8984da525262224d9f2e58bfc9dbb",
@@ -348,7 +258,7 @@
       {
         "commit": {
           "message": "Fix dotnet-test-frameworks skill activation for evaluations (#580)",
-          "timestamp": "2026-04-23T16:24:48+02:00",
+          "timestamp": "2026-04-23T14:24:48+00:00",
           "url": "https://github.com/dotnet/skills/commit/1b105d19401d3934c337def001cce6b0259e0fc5",
           "author": {
             "username": "JanKrivanek",
@@ -446,81 +356,64 @@
           "url": "https://github.com/dotnet/skills/commit/59c795c896a7fbce1ef7fa6257e8cc6639b1ba7d"
         },
         "date": 1777086727526
+      },
+      {
+        "benches": [
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time",
+            "overfitting": "moderate",
+            "value": 16.0,
+            "overfittingScore": 0.41,
+            "unit": "seconds"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In",
+            "overfitting": "moderate",
+            "value": 24063.0,
+            "overfittingScore": 0.41,
+            "unit": "tokens"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time",
+            "overfitting": "moderate",
+            "value": 15.4,
+            "overfittingScore": 0.41,
+            "unit": "seconds"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In",
+            "overfitting": "moderate",
+            "value": 24022.0,
+            "overfittingScore": 0.41,
+            "unit": "tokens"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Time",
+            "value": 10.9,
+            "unit": "seconds"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Tokens In",
+            "value": 12546.0,
+            "unit": "tokens"
+          }
+        ],
+        "date": 1777346921191,
+        "model": "claude-opus-4.6",
+        "tool": "customSmallerIsBetter",
+        "commit": {
+          "id": "a55227f030d90e4d29df9684c53b34cb40ac0243",
+          "timestamp": "2026-04-27T13:07:18+00:00",
+          "author": {
+            "name": "Tomas Grosup",
+            "username": "JanKrivanek"
+          },
+          "url": "https://github.com/dotnet/skills/commit/a55227f030d90e4d29df9684c53b34cb40ac0243",
+          "message": "Fold F# .fsproj ordering into msbuild-antipatterns AP-05 (#577)"
+        }
       }
     ],
     "Quality": [
-      {
-        "benches": [
-          {
-            "value": 8.800000190734863,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality",
-            "overfitting": "moderate",
-            "unit": "Score (0-10)",
-            "overfittingScore": 0.28
-          },
-          {
-            "value": 8.800000190734863,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality",
-            "overfitting": "moderate",
-            "unit": "Score (0-10)",
-            "overfittingScore": 0.28
-          },
-          {
-            "value": 9.600000381469727,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality",
-            "unit": "Score (0-10)"
-          }
-        ],
-        "tool": "customBiggerIsBetter",
-        "date": 1775957286921,
-        "model": "claude-opus-4.6",
-        "commit": {
-          "message": "Add Reviewer Teams (#323)",
-          "url": "https://github.com/dotnet/skills/commit/08ff14b0097776933183fb7c709fe94b70a29270",
-          "timestamp": "2026-04-11T07:27:19+02:00",
-          "id": "08ff14b0097776933183fb7c709fe94b70a29270",
-          "author": {
-            "name": "Devin Breshears",
-            "username": "JanKrivanek"
-          }
-        }
-      },
-      {
-        "commit": {
-          "message": "Simplify the focus of devops health workflows (#521)",
-          "id": "70e2d3b3339a6126c081540ada603de14e5a9163",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Jan Krivanek"
-          },
-          "timestamp": "2026-04-13T17:39:20+02:00",
-          "url": "https://github.com/dotnet/skills/commit/70e2d3b3339a6126c081540ada603de14e5a9163"
-        },
-        "model": "claude-opus-4.6",
-        "date": 1776135652005,
-        "tool": "customBiggerIsBetter",
-        "benches": [
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality",
-            "overfittingScore": 0.29,
-            "value": 9.199999809265137,
-            "unit": "Score (0-10)",
-            "overfitting": "moderate"
-          },
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality",
-            "overfittingScore": 0.29,
-            "value": 8.399999618530273,
-            "unit": "Score (0-10)",
-            "overfitting": "moderate"
-          },
-          {
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality",
-            "value": 9.199999809265137,
-            "unit": "Score (0-10)"
-          }
-        ]
-      },
       {
         "tool": "customBiggerIsBetter",
         "model": "claude-opus-4.6",
@@ -544,7 +437,7 @@
         "commit": {
           "id": "e6f416848c6abb9b972f6043dd6c3e721b8d8e24",
           "message": "Fix the repo path traversal check (#525)",
-          "timestamp": "2026-04-14T18:52:02+02:00",
+          "timestamp": "2026-04-14T16:52:02+00:00",
           "url": "https://github.com/dotnet/skills/commit/e6f416848c6abb9b972f6043dd6c3e721b8d8e24",
           "author": {
             "username": "JanKrivanek",
@@ -559,7 +452,7 @@
           "id": "9f2c53f68e0450fa0cd2f52c3023bb23e65d46bf",
           "url": "https://github.com/dotnet/skills/commit/9f2c53f68e0450fa0cd2f52c3023bb23e65d46bf",
           "message": "Fix the DevOps health dashboard grooming (#529)",
-          "timestamp": "2026-04-15T19:01:40+02:00",
+          "timestamp": "2026-04-15T17:01:40+00:00",
           "author": {
             "username": "JanKrivanek",
             "name": "Jan Krivanek"
@@ -591,7 +484,7 @@
       },
       {
         "commit": {
-          "timestamp": "2026-04-16T19:31:55+02:00",
+          "timestamp": "2026-04-16T17:31:55+00:00",
           "url": "https://github.com/dotnet/skills/commit/dd37cd3bb65b219966b44c3f5d8c0a402cd28ff6",
           "message": "Add skill coverage measurement tool (#509)",
           "author": {
@@ -651,7 +544,7 @@
         ],
         "commit": {
           "id": "f46275e64e0f8a82ab0187d0c1f3be273e89de7a",
-          "timestamp": "2026-04-17T20:29:24+02:00",
+          "timestamp": "2026-04-17T18:29:24+00:00",
           "message": "Add evaluation tests for test-migration and test-quality-auditor agents (#543)",
           "author": {
             "name": "Amaury Lev├⌐",
@@ -669,7 +562,7 @@
             "username": "JanKrivanek",
             "name": "Amaury Lev├⌐"
           },
-          "timestamp": "2026-04-20T21:39:40+02:00",
+          "timestamp": "2026-04-20T19:39:40+00:00",
           "url": "https://github.com/dotnet/skills/commit/96489b425e50bd4857dd1a1bd492399186fd5309",
           "message": "eval(dotnet-test): add evaluations for dotnet-test-frameworks skill (#563)",
           "id": "96489b425e50bd4857dd1a1bd492399186fd5309"
@@ -699,7 +592,7 @@
       },
       {
         "commit": {
-          "timestamp": "2026-04-21T19:10:25+02:00",
+          "timestamp": "2026-04-21T17:10:25+00:00",
           "url": "https://github.com/dotnet/skills/commit/8651264f12f8984da525262224d9f2e58bfc9dbb",
           "message": "Fix skill activation for exit code 8 scenario (#567)",
           "id": "8651264f12f8984da525262224d9f2e58bfc9dbb",
@@ -732,7 +625,7 @@
       {
         "commit": {
           "message": "Fix dotnet-test-frameworks skill activation for evaluations (#580)",
-          "timestamp": "2026-04-23T16:24:48+02:00",
+          "timestamp": "2026-04-23T14:24:48+00:00",
           "url": "https://github.com/dotnet/skills/commit/1b105d19401d3934c337def001cce6b0259e0fc5",
           "author": {
             "username": "JanKrivanek",
@@ -796,9 +689,45 @@
           "url": "https://github.com/dotnet/skills/commit/59c795c896a7fbce1ef7fa6257e8cc6639b1ba7d"
         },
         "date": 1777086727526
+      },
+      {
+        "benches": [
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality",
+            "overfitting": "moderate",
+            "value": 9.199999809265137,
+            "overfittingScore": 0.41,
+            "unit": "Score (0-10)"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality",
+            "overfitting": "moderate",
+            "value": 9.600000381469727,
+            "overfittingScore": 0.41,
+            "unit": "Score (0-10)"
+          },
+          {
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality",
+            "value": 9.600000381469727,
+            "unit": "Score (0-10)"
+          }
+        ],
+        "date": 1777346921191,
+        "model": "claude-opus-4.6",
+        "tool": "customBiggerIsBetter",
+        "commit": {
+          "id": "a55227f030d90e4d29df9684c53b34cb40ac0243",
+          "timestamp": "2026-04-27T13:07:18+00:00",
+          "author": {
+            "name": "Tomas Grosup",
+            "username": "JanKrivanek"
+          },
+          "url": "https://github.com/dotnet/skills/commit/a55227f030d90e4d29df9684c53b34cb40ac0243",
+          "message": "Fold F# .fsproj ordering into msbuild-antipatterns AP-05 (#577)"
+        }
       }
     ]
   },
   "repoUrl": "",
-  "lastUpdate": 1777086727526
+  "lastUpdate": 1777346921191
 }
