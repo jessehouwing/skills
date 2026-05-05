@@ -2,51 +2,6 @@
   "entries": {
     "Efficiency": [
       {
-        "date": 1776740429537,
-        "tool": "customSmallerIsBetter",
-        "commit": {
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Amaury Lev├⌐"
-          },
-          "timestamp": "2026-04-20T19:39:40+00:00",
-          "url": "https://github.com/dotnet/skills/commit/96489b425e50bd4857dd1a1bd492399186fd5309",
-          "message": "eval(dotnet-test): add evaluations for dotnet-test-frameworks skill (#563)",
-          "id": "96489b425e50bd4857dd1a1bd492399186fd5309"
-        },
-        "model": "claude-opus-4.6",
-        "benches": [
-          {
-            "value": 18.6,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time",
-            "unit": "seconds",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          },
-          {
-            "value": 27126.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In",
-            "unit": "tokens",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          },
-          {
-            "value": 18.8,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time",
-            "unit": "seconds",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          },
-          {
-            "value": 27147.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In",
-            "unit": "tokens",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          }
-        ]
-      },
-      {
         "commit": {
           "timestamp": "2026-04-21T17:10:25+00:00",
           "url": "https://github.com/dotnet/skills/commit/8651264f12f8984da525262224d9f2e58bfc9dbb",
@@ -451,45 +406,64 @@
         ],
         "model": "claude-opus-4.6",
         "date": 1777691099761
+      },
+      {
+        "benches": [
+          {
+            "value": 17.6,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time",
+            "overfitting": "moderate",
+            "unit": "seconds"
+          },
+          {
+            "value": 26915.0,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In",
+            "overfitting": "moderate",
+            "unit": "tokens"
+          },
+          {
+            "value": 15.9,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time",
+            "overfitting": "moderate",
+            "unit": "seconds"
+          },
+          {
+            "value": 26895.0,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In",
+            "overfitting": "moderate",
+            "unit": "tokens"
+          },
+          {
+            "value": 11.5,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Time",
+            "unit": "seconds"
+          },
+          {
+            "value": 12545.0,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Tokens In",
+            "unit": "tokens"
+          }
+        ],
+        "tool": "customSmallerIsBetter",
+        "commit": {
+          "id": "2633d3d4824e04fd289b8c8b650c65ab8bc6de5a",
+          "message": "add a new dotnet11 plugin and a new system text json skill to it. (#535)",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "Manish Jayaswal"
+          },
+          "url": "https://github.com/dotnet/skills/commit/2633d3d4824e04fd289b8c8b650c65ab8bc6de5a",
+          "timestamp": "2026-05-04T19:08:25+00:00"
+        },
+        "date": 1777952183795,
+        "model": "claude-opus-4.6"
       }
     ],
     "Quality": [
-      {
-        "date": 1776740429537,
-        "tool": "customBiggerIsBetter",
-        "commit": {
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Amaury Lev├⌐"
-          },
-          "timestamp": "2026-04-20T19:39:40+00:00",
-          "url": "https://github.com/dotnet/skills/commit/96489b425e50bd4857dd1a1bd492399186fd5309",
-          "message": "eval(dotnet-test): add evaluations for dotnet-test-frameworks skill (#563)",
-          "id": "96489b425e50bd4857dd1a1bd492399186fd5309"
-        },
-        "model": "claude-opus-4.6",
-        "benches": [
-          {
-            "value": 8.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality",
-            "unit": "Score (0-10)",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          },
-          {
-            "value": 9.199999809265137,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality",
-            "unit": "Score (0-10)",
-            "overfitting": "moderate",
-            "overfittingScore": 0.24
-          },
-          {
-            "value": 10.0,
-            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality",
-            "unit": "Score (0-10)"
-          }
-        ]
-      },
       {
         "commit": {
           "timestamp": "2026-04-21T17:10:25+00:00",
@@ -765,9 +739,45 @@
         ],
         "model": "claude-opus-4.6",
         "date": 1777691099761
+      },
+      {
+        "benches": [
+          {
+            "value": 8.800000190734863,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality",
+            "overfitting": "moderate",
+            "unit": "Score (0-10)"
+          },
+          {
+            "value": 9.199999809265137,
+            "overfittingScore": 0.27,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality",
+            "overfitting": "moderate",
+            "unit": "Score (0-10)"
+          },
+          {
+            "value": 9.600000381469727,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality",
+            "unit": "Score (0-10)"
+          }
+        ],
+        "tool": "customBiggerIsBetter",
+        "commit": {
+          "id": "2633d3d4824e04fd289b8c8b650c65ab8bc6de5a",
+          "message": "add a new dotnet11 plugin and a new system text json skill to it. (#535)",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "Manish Jayaswal"
+          },
+          "url": "https://github.com/dotnet/skills/commit/2633d3d4824e04fd289b8c8b650c65ab8bc6de5a",
+          "timestamp": "2026-05-04T19:08:25+00:00"
+        },
+        "date": 1777952183795,
+        "model": "claude-opus-4.6"
       }
     ]
   },
   "repoUrl": "",
-  "lastUpdate": 1777691099761
+  "lastUpdate": 1777952183795
 }
