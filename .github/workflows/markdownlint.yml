@@ -29,18 +29,28 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - name: Get changed Markdown files
-        id: changed-files
+      - name: Detect lint scope
+        id: scope
         run: |
-          FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- '*.md' | tr '\n' ' ')
-          echo "files=$FILES" >> "$GITHUB_OUTPUT"
-          if [ -n "$FILES" ]; then
-            echo "any_changed=true" >> "$GITHUB_OUTPUT"
+          # If config or workflow changed, lint all .md files; otherwise lint only changed .md files
+          CONFIG_CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- '.markdownlint-cli2.jsonc' '.github/workflows/markdownlint.yml')
+          if [ -n "$CONFIG_CHANGED" ]; then
+            echo "mode=all" >> "$GITHUB_OUTPUT"
           else
-            echo "any_changed=false" >> "$GITHUB_OUTPUT"
+            FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD -- '*.md' | tr '\n' ' ')
+            echo "files=$FILES" >> "$GITHUB_OUTPUT"
+            if [ -n "$FILES" ]; then
+              echo "mode=changed" >> "$GITHUB_OUTPUT"
+            else
+              echo "mode=none" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Run markdownlint
-        if: steps.changed-files.outputs.any_changed == 'true'
+        if: steps.scope.outputs.mode != 'none'
         run: |
-          npx markdownlint-cli2 ${{ steps.changed-files.outputs.files }}
+          if [ "${{ steps.scope.outputs.mode }}" = "all" ]; then
+            npx markdownlint-cli2 "**/*.md"
+          else
+            npx markdownlint-cli2 ${{ steps.scope.outputs.files }}
+          fi
