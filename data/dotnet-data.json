@@ -534,6 +534,61 @@
           }
         ],
         "date": 1778297298237
+      },
+      {
+        "model": "claude-opus-4.6",
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "value": 15.9,
+            "overfittingScore": 0.39,
+            "unit": "seconds",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time"
+          },
+          {
+            "value": 26826.0,
+            "overfittingScore": 0.39,
+            "unit": "tokens",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In"
+          },
+          {
+            "value": 18.0,
+            "overfittingScore": 0.39,
+            "unit": "seconds",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time"
+          },
+          {
+            "value": 26833.0,
+            "overfittingScore": 0.39,
+            "unit": "tokens",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In"
+          },
+          {
+            "value": 10.8,
+            "unit": "seconds",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Time"
+          },
+          {
+            "value": 12519.0,
+            "unit": "tokens",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Tokens In"
+          }
+        ],
+        "commit": {
+          "url": "https://github.com/dotnet/skills/commit/4a4c424ee43f60354230389e96c39053307121d8",
+          "id": "4a4c424ee43f60354230389e96c39053307121d8",
+          "timestamp": "2026-05-08T09:37:03Z",
+          "message": "Bump the github-actions-dependencies group across 1 directory with 3 updates (#631)",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "dependabot[bot]"
+          }
+        },
+        "date": 1778383507066
       }
     ],
     "Quality": [
@@ -888,9 +943,45 @@
           }
         ],
         "date": 1778297298237
+      },
+      {
+        "model": "claude-opus-4.6",
+        "tool": "customBiggerIsBetter",
+        "benches": [
+          {
+            "value": 8.800000190734863,
+            "overfittingScore": 0.39,
+            "unit": "Score (0-10)",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality"
+          },
+          {
+            "value": 9.600000381469727,
+            "overfittingScore": 0.39,
+            "unit": "Score (0-10)",
+            "overfitting": "moderate",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality"
+          },
+          {
+            "value": 10.0,
+            "unit": "Score (0-10)",
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality"
+          }
+        ],
+        "commit": {
+          "url": "https://github.com/dotnet/skills/commit/4a4c424ee43f60354230389e96c39053307121d8",
+          "id": "4a4c424ee43f60354230389e96c39053307121d8",
+          "timestamp": "2026-05-08T09:37:03Z",
+          "message": "Bump the github-actions-dependencies group across 1 directory with 3 updates (#631)",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "dependabot[bot]"
+          }
+        },
+        "date": 1778383507066
       }
     ]
   },
   "repoUrl": "",
-  "lastUpdate": 1778297298237
+  "lastUpdate": 1778383507066
 }
