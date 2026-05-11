@@ -589,6 +589,61 @@
           }
         },
         "date": 1778383507066
+      },
+      {
+        "model": "claude-opus-4.6",
+        "commit": {
+          "timestamp": "2026-05-08T09:37:03Z",
+          "author": {
+            "name": "dependabot[bot]",
+            "username": "JanKrivanek"
+          },
+          "url": "https://github.com/dotnet/skills/commit/4a4c424ee43f60354230389e96c39053307121d8",
+          "message": "Bump the github-actions-dependencies group across 1 directory with 3 updates (#631)",
+          "id": "4a4c424ee43f60354230389e96c39053307121d8"
+        },
+        "benches": [
+          {
+            "unit": "seconds",
+            "value": 16.0,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Time"
+          },
+          {
+            "unit": "tokens",
+            "value": 26759.0,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Tokens In"
+          },
+          {
+            "unit": "seconds",
+            "value": 20.0,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Time"
+          },
+          {
+            "unit": "tokens",
+            "value": 26758.0,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Tokens In"
+          },
+          {
+            "unit": "seconds",
+            "value": 12.4,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Time"
+          },
+          {
+            "unit": "tokens",
+            "value": 12528.0,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Tokens In"
+          }
+        ],
+        "tool": "customSmallerIsBetter",
+        "date": 1778470064019
       }
     ],
     "Quality": [
@@ -979,9 +1034,45 @@
           }
         },
         "date": 1778383507066
+      },
+      {
+        "model": "claude-opus-4.6",
+        "commit": {
+          "timestamp": "2026-05-08T09:37:03Z",
+          "author": {
+            "name": "dependabot[bot]",
+            "username": "JanKrivanek"
+          },
+          "url": "https://github.com/dotnet/skills/commit/4a4c424ee43f60354230389e96c39053307121d8",
+          "message": "Bump the github-actions-dependencies group across 1 directory with 3 updates (#631)",
+          "id": "4a4c424ee43f60354230389e96c39053307121d8"
+        },
+        "benches": [
+          {
+            "unit": "Score (0-10)",
+            "value": 9.600000381469727,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Skilled Quality"
+          },
+          {
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137,
+            "overfitting": "moderate",
+            "overfittingScore": 0.22,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Plugin Quality"
+          },
+          {
+            "unit": "Score (0-10)",
+            "value": 9.600000381469727,
+            "name": "optimizing-ef-core-queries/Optimize bulk operations with EF Core 7+ ExecuteUpdate and ExecuteDelete - Vanilla Quality"
+          }
+        ],
+        "tool": "customBiggerIsBetter",
+        "date": 1778470064019
       }
     ]
   },
   "repoUrl": "",
-  "lastUpdate": 1778383507066
+  "lastUpdate": 1778470064019
 }
