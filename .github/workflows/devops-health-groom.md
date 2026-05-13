@@ -179,9 +179,9 @@ and rows like:
 | {finding_title} | {severity} | 🔄 Dispatched | {date} | ⏳ Investigation dispatched — results arriving shortly... |
 ```
 
-**Duplicate section handling:** If the issue body contains **multiple** `## 🔍 Investigation Results` sections, merge all rows from every occurrence into a single table (de-duplicate by finding title). The `replace-island` operation only replaces the **first** occurrence — it does NOT automatically remove later duplicates. If duplicates exist, extract all rows first, then the single `replace-island` call will place them in the first section. Any remaining duplicate sections will be overwritten by the next health-check run (which replaces the entire issue body).
+**Duplicate section handling:** If the issue body contains **multiple** `## 🔍 Investigation Results` sections (legacy from before this fix), merge all rows from every occurrence into a single table (de-duplicate by finding title). The `replace-island` operation only replaces the content inside this workflow's island markers — it does NOT automatically remove sections outside the island. If duplicates exist, extract all rows first, then the single `replace-island` call will consolidate them into the island.
 
-**If the section is missing** (the health check agent sometimes omits it), you MUST
+**If the section is missing** (first run, or after a reset), you MUST
 create it. Do NOT skip this step — creating the section is the primary purpose of
 this workflow. Proceed to Step 3.2 with an empty table.
 
@@ -359,7 +359,7 @@ If changes were made, the summary is implicit in the safe-output calls. Do NOT c
 
 ## Guidelines
 
-- **CRITICAL — Use `operation: "replace-island"`**: When calling `update-issue`, you **MUST** set `operation: "replace-island"`. This replaces only the `## 🔍 Investigation Results` section in the issue body, leaving all other sections untouched. The `body` field must contain only the Investigation Results section content (from the `## 🔍 Investigation Results` heading up to but not including the next `##`-level heading). Do NOT pass the full issue body — `replace-island` handles scoping automatically. If multiple `## 🔍 Investigation Results` sections exist in the body, `replace-island` targets the first one — the groomer must merge all rows from every occurrence into that single section before calling `replace-island`. Later duplicate sections are not automatically removed; the next health-check run (which replaces the full body) will clean them up.
+- **CRITICAL — Use `operation: "replace-island"`**: When calling `update-issue`, you **MUST** set `operation: "replace-island"`. This replaces only the `## 🔍 Investigation Results` section in the issue body, leaving all other sections untouched. The `body` field must contain only the Investigation Results section content (from the `## 🔍 Investigation Results` heading up to but not including the next `##`-level heading). Do NOT pass the full issue body — `replace-island` handles scoping automatically. The health-check workflow does NOT create this section — the groom is the sole owner. If the section doesn't exist yet, `replace-island` will create the island. If legacy duplicate sections exist in the body, merge all rows into your single `replace-island` call.
 - **CRITICAL — Safe output body must be inline**: When calling `update-issue`, the `body` field must contain the **literal section text**. NEVER write the body to a file and use a shell reference like `$(cat file.txt)` — safe outputs are literal JSON strings, not shell-evaluated. The body must be passed directly as the string value.
 - **Minimal edits only**: You are a groomer, not a rewriter. Only change: (a) investigation table rows (status + link), (b) resolved-finding annotations. Copy all other sections **byte-for-byte** from the original body. Do not reformat, re-wrap, or reorganize sections you are not changing.
 - **Be precise with comment parsing**: The comment format is well-defined (see the investigation worker template). Match the exact patterns — don't be fuzzy.
