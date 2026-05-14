@@ -36,38 +36,6 @@ Use this skill when you need to:
 - Writing tests specifically for MSTest patterns (use `writing-mstest-tests`)
 - Debugging failing test logic
 
-## How It Works
-
-This skill coordinates multiple specialized agents in a **Research → Plan → Implement** pipeline:
-
-### Pipeline Overview
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                     TEST GENERATOR                          │
-│  Coordinates the full pipeline and manages state            │
-└─────────────────────┬───────────────────────────────────────┘
-                      │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-┌───────────┐  ┌───────────┐  ┌───────────────┐
-│ RESEARCHER│  │  PLANNER  │  │  IMPLEMENTER  │
-│           │  │           │  │               │
-│ Analyzes  │  │ Creates   │  │ Writes tests  │
-│ codebase  │→ │ phased    │→ │ per phase     │
-│           │  │ plan      │  │               │
-└───────────┘  └───────────┘  └───────┬───────┘
-                                      │
-                    ┌─────────┬───────┼───────────┐
-                    ▼         ▼       ▼           ▼
-              ┌─────────┐ ┌───────┐ ┌───────┐ ┌───────┐
-              │ BUILDER │ │TESTER │ │ FIXER │ │LINTER │
-              │         │ │       │ │       │ │       │
-              │ Compiles│ │ Runs  │ │ Fixes │ │Formats│
-              │ code    │ │ tests │ │ errors│ │ code  │
-              └─────────┘ └───────┘ └───────┘ └───────┘
-```
-
 ## Step-by-Step Instructions
 
 ### Step 1: Determine the user request
@@ -75,9 +43,19 @@ This skill coordinates multiple specialized agents in a **Research → Plan → 
 Make sure you understand what user is asking and for what scope.
 When the user does not express strong requirements for test style, coverage goals, or conventions, source the guidelines from [unit-test-generation.prompt.md](unit-test-generation.prompt.md). This prompt provides best practices for discovering conventions, parameterization strategies, coverage goals (aim for 80%), and language-specific patterns.
 
-### Step 2: Invoke the Test Generator
+### Step 2: Determine scope and strategy
 
-Start by calling the `code-testing-generator` agent with your test generation request:
+A small, self-contained request (e.g., tests for a single function or class) that you can complete without sub-agents should use the **Direct** strategy: write the tests immediately, then run them right away. If any test fails, read the production code, fix the assertion, and re-run before writing more tests.
+
+You can skip rest of this skill for the Direct strategy.
+
+For moderate or large scopes (you need to author tests for more then single file, module or class) proceed by calling the `code-testing-generator` agent with your test generation request:
+
+```
+task({ agent_type: "dotnet-test:code-testing-generator", name: "generator", prompt: "..." })
+```
+
+Sample prompt (make sure to pass full path to 'unit-test-generation.prompt.md' if you want to pass it as part of the prompt - as agent doesn't have access to your referencess and will not know how to find it otherwise):
 
 ```text
 Generate unit tests for [path or description of what to test], following the [unit-test-generation.prompt.md](unit-test-generation.prompt.md) guidelines
@@ -85,127 +63,6 @@ Generate unit tests for [path or description of what to test], following the [un
 
 The Test Generator will manage the entire pipeline automatically.
 
-### Step 3: Research Phase (Automatic)
+### Note on calling the code-testing subagents
 
-The `code-testing-researcher` agent analyzes your codebase to understand:
-
-- **Language & Framework**: Detects C#, TypeScript, Python, Go, Rust, Java, etc.
-- **Testing Framework**: Identifies MSTest, xUnit, Jest, pytest, go test, etc.
-- **Project Structure**: Maps source files, existing tests, and dependencies
-- **Build Commands**: Discovers how to build and test the project
-
-Output: `.testagent/research.md`
-
-### Step 4: Planning Phase (Automatic)
-
-The `code-testing-planner` agent creates a structured implementation plan:
-
-- Groups files into logical phases (2-5 phases typical)
-- Prioritizes by complexity and dependencies
-- Specifies test cases for each file
-- Defines success criteria per phase
-
-Output: `.testagent/plan.md`
-
-### Step 5: Implementation Phase (Automatic)
-
-The `code-testing-implementer` agent executes each phase sequentially:
-
-1. **Read** source files to understand the API
-2. **Write** test files following project patterns
-3. **Build** using the `code-testing-builder` sub-agent to verify compilation
-4. **Test** using the `code-testing-tester` sub-agent to verify tests pass
-5. **Fix** using the `code-testing-fixer` sub-agent if errors occur
-6. **Lint** using the `code-testing-linter` sub-agent for code formatting
-
-Each phase completes before the next begins, ensuring incremental progress.
-
-### Coverage Types
-
-- **Happy path**: Valid inputs produce expected outputs
-- **Edge cases**: Empty values, boundaries, special characters
-- **Error cases**: Invalid inputs, null handling, exceptions
-
-## State Management
-
-All pipeline state is stored in `.testagent/` folder:
-
-| File                     | Purpose                      |
-| ------------------------ | ---------------------------- |
-| `.testagent/research.md` | Codebase analysis results    |
-| `.testagent/plan.md`     | Phased implementation plan   |
-| `.testagent/status.md`   | Progress tracking (optional) |
-
-## Examples
-
-### Strategy Selection
-
-The generator picks a strategy based on request scope:
-
-| User Request | Strategy | Why |
-|---|---|---|
-| "Generate tests for `src/services/UserService.ts`" | **Direct** | Single file, small scope — write tests immediately, skip sub-agents |
-| "Add unit tests for my billing project" | **Single pass** | Moderate scope — one Research → Plan → Implement cycle covers it |
-| "Achieve 80% coverage across the entire solution" | **Iterative** | Large scope — multiple R→P→I cycles, each narrowing remaining gaps |
-
-### Pipeline Walkthrough
-
-Given a request like *"Generate unit tests for my InvoiceService"*, the pipeline produces:
-
-1. **Research** → `.testagent/research.md` containing detected language/framework, build commands, files to test ranked by priority, and existing test inventory
-2. **Plan** → `.testagent/plan.md` containing phased approach with specific methods and test scenarios (happy path, edge cases, error cases) for each file
-3. **Implement** → Test files written, built, and verified per phase. Fix cycle runs automatically if build/test errors occur
-4. **Validate** → Full workspace build + full test run to catch cross-project issues
-5. **Report** → Summary of tests created, pass/fail counts, coverage notes, and next steps
-
-### Language-Specific Examples
-
-The `code-testing-extensions` skill provides concrete, filled-in examples for each pipeline phase showing real source code, real research output, real plans, and real generated tests. Call the `code-testing-extensions` skill to discover available extension files, then read:
-
-- **`dotnet-examples.md`** — MSTest example with InvoiceService: research output, plan output, generated test file, fix cycle walkthrough, and final report
-
-## Agent Reference
-
-| Agent                      | Purpose              |
-| -------------------------- | -------------------- |
-| `code-testing-generator`   | Coordinates pipeline |
-| `code-testing-researcher`  | Analyzes codebase    |
-| `code-testing-planner`     | Creates test plan    |
-| `code-testing-implementer` | Writes test files    |
-| `code-testing-builder`     | Compiles code        |
-| `code-testing-tester`      | Runs tests           |
-| `code-testing-fixer`       | Fixes errors         |
-| `code-testing-linter`      | Formats code         |
-
-## Requirements
-
-- Project must have a build/test system configured
-- Testing framework should be installed (or installable)
-- VS Code with GitHub Copilot extension
-
-## Troubleshooting
-
-### Tests don't compile
-
-The `code-testing-fixer` agent will attempt to resolve compilation errors. Check `.testagent/plan.md` for the expected test structure. Call the `code-testing-extensions` skill and read the language-specific extension file for error code references (e.g., `dotnet.md` for .NET).
-
-### Tests fail
-
-Most failures in generated tests are caused by **wrong expected values in assertions**, not production code bugs:
-
-1. Read the actual test output
-2. Read the production code to understand correct behavior
-3. Fix the assertion, not the production code
-4. Never mark tests `[Ignore]` or `[Skip]` just to make them pass
-
-### Wrong testing framework detected
-
-Specify your preferred framework in the initial request: "Generate Jest tests for..."
-
-### Environment-dependent tests fail
-
-Tests that depend on external services, network endpoints, specific ports, or precise timing will fail in CI environments. Focus on unit tests with mocked dependencies instead.
-
-### Build fails on full solution
-
-During phase implementation, build only the specific test project for speed. After all phases, run a full non-incremental workspace build to catch cross-project errors.
+The `code-testing` agents is a cascade of agents that will direct you to call each other. Make sure to call them as subagents (`task({ agent_type: "dotnet-test:code-testing...", ... })`)
