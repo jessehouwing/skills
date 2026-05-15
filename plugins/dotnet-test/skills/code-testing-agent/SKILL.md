@@ -1,12 +1,10 @@
 ---
 name: code-testing-agent
 description: >-
-  Generates comprehensive, workable unit tests for any programming language
-  using a multi-agent pipeline. Use when asked to generate tests, write unit
-  tests, improve test coverage, add test coverage, or create test files.
-  Supports C#, TypeScript, JavaScript, Python, Go, Rust, Java, and more.
-  Orchestrates research, planning, and implementation phases to produce
-  tests that compile, pass, and follow project conventions.
+  Unit tests authoring for any programming language.
+  Use when asked to write (generate) unit tests, improve test coverage, add test coverage, or create test files.
+  Supports any language - C#, TypeScript, JavaScript, Python, Go, Rust, Java, and more.
+  Produces tests that compile, pass, and follow project conventions.
   DO NOT USE FOR: running existing tests, executing dotnet test, applying
   test filters, detecting test platforms, or troubleshooting test execution
   (use run-tests for all of these); MSTest-specific assertion guidance,
@@ -23,7 +21,7 @@ An AI-powered skill that generates comprehensive, workable unit tests for any pr
 
 Use this skill when you need to:
 
-- Generate unit tests for an entire project or specific files
+- Generate unit tests for an entire project or specific files or functions
 - Improve test coverage for existing codebases
 - Create test files that follow project conventions
 - Write tests that actually compile and pass
@@ -45,11 +43,15 @@ When the user does not express strong requirements for test style, coverage goal
 
 ### Step 2: Determine scope and strategy
 
-A small, self-contained request (e.g., tests for a single function or class) that you can complete without sub-agents should use the **Direct** strategy: write the tests immediately, then run them right away. If any test fails, read the production code, fix the assertion, and re-run before writing more tests.
+A small, self-contained request (e.g., tests for a single function or class) that you can complete without sub-agents should use the **Direct** strategy:
+
+ - Follow the codebase conventions on test file structure, naming, style and testing approaches.
+ - Reuse existing test projects and test files when possible. If the code under test already has tests, add new tests to the same file or test project. Only create a new test file when no canonical file is named or discoverable for the symbol under test.
+ - Write the tests directly, then run them right away. If any test fails, read the production code, fix the assertion, and re-run before writing more tests.
 
 You can skip rest of this skill for the Direct strategy.
 
-For moderate or large scopes (you need to author tests for more then single file, module or class) proceed by calling the `code-testing-generator` agent with your test generation request:
+For moderate or large scopes (you need to author tests for more than a single file, module, or class) proceed by calling the `code-testing-generator` agent with your test generation request:
 
 ```
 task({ agent_type: "dotnet-test:code-testing-generator", name: "generator", prompt: "..." })
