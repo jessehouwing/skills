@@ -63,10 +63,12 @@ Group files by:
 
 For each file in each phase, specify:
 
-- Test file location
+- Test file location — **use the canonical test file from the research** (the "Test File Placement Map" section). If research identifies `foo_test.go` as the existing test file for `foo.go`, plan to add tests there — do not plan a new file.
 - Test class/module name
 - Methods/functions to test
 - Key test scenarios (happy path, edge cases, errors)
+- **Naming convention** — use the naming pattern documented in the research (the "Test Naming Convention" section)
+- **Assertion style** — use the assertion idioms documented in the research (the "Assertion Idioms" section)
 
 **Important**: When adding new tests, they MUST go into the existing test project that already tests the target code. Do not create a separate test project unnecessarily. If no existing test project covers the target, create a new one.
 

@@ -71,6 +71,7 @@ Go uses package paths derived from the module path in `go.mod`.
 | Integration / build-tag gated | `foo_integration_test.go` | Add `//go:build integration` at top |
 
 - Test files **must** end with `_test.go` — the toolchain ignores other names
+- **Always add tests to the existing `_test.go` file** for the package. Search for `foo_test.go` before creating a new file. Only create a new test file when the package has no existing `_test.go` file.
 - A package directory may contain both `package foo` and `package foo_test` test files simultaneously
 - Helpers shared across tests in one package go in `helpers_test.go` — do not export them; put them in the `_test` package only if integration tests in another package need them
 - Imports use the full module path: `import "github.com/org/module/pkg"` — copy the exact module path from `go.mod`
@@ -86,7 +87,14 @@ Go uses package paths derived from the module path in `go.mod`.
 | Fuzz (Go 1.18+) | `func FuzzThing(f *testing.F)` |
 | Per-package setup | `func TestMain(m *testing.M)` — call `m.Run()` and `os.Exit` with its code |
 
-Use **table-driven tests** when generating multiple cases for the same behavior — this is idiomatic Go and matches what most repos already use:
+Use **table-driven tests** when generating multiple cases for the same behavior — this is idiomatic Go and matches what most repos already use.
+
+**Before writing any test**, read 3-5 existing test functions in the same package to identify:
+
+- Whether they use **table-driven patterns** (slice of `struct` with `t.Run` loop) — if yes, you MUST use the same pattern
+- Which **assertion library** they use (`testify/require`, `testify/assert`, stdlib `testing`, or `cmp.Diff`) — use the same one
+- Whether they use **custom comparison helpers** (e.g., `cmp.Diff` with package-specific options like `data.FrameTestCompareOptions()`) — use those exact helpers
+- Whether they use **specific error assertion patterns** (e.g., `require.EqualError` vs `require.Contains`) — match the exact pattern
 
 ```go
 func TestAdd(t *testing.T) {

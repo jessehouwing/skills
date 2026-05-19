@@ -35,7 +35,7 @@ Based on the request scope, pick exactly one strategy and follow it:
 
 | Strategy | When to use | What to do |
 | ---------- | ------------- | ------------ |
-| **Direct** | A small, self-contained request (e.g., tests for a single function or class) that you can complete without sub-agents | Follow the codebase conventions on test file structure, naming, style, and testing approaches. Reuse existing test projects and test files when possible — if the code under test already has tests, add new tests to the same file or test project. Only create a new test file when no canonical file is named or discoverable for the symbol under test. Write the tests immediately. **Run them right away** — if any test fails, read the production code, fix the assertion, and re-run before writing more tests. Skip Steps 3-5 (research, plan, implement sub-agents). Then proceed to Steps 6-9 for validation and reporting. |
+| **Direct** | A small, self-contained request (e.g., tests for a single function or class) that you can complete without sub-agents | Follow the codebase conventions on test file structure, naming, style, and testing approaches. Reuse existing test projects and test files when possible — if the code under test already has tests, add new tests to the same file or test project. **Always search for the canonical test file** for the module under test (e.g., `foo_test.go` for `foo.go`, `test_utils.py` for `utils.py`) and add tests there. Only create a new test file when no canonical file is named or discoverable for the symbol under test. **Study existing test patterns** in the repo: naming conventions, assertion helpers, test structure (table-driven, parametrized, etc.) and replicate them exactly. Write the tests immediately. **Run them right away** — if any test fails, read the production code, fix the assertion, and re-run before writing more tests. Skip Steps 3-5 (research, plan, implement sub-agents). Then proceed to Steps 6-9 for validation and reporting. |
 | **Single pass** | A moderate scope (couple projects or modules) that a single Research → Plan → Implement cycle can cover | Execute Steps 3-8 once, then proceed to Step 9. |
 | **Iterative** | A large scope or ambitious coverage target that one pass cannot satisfy | Execute Steps 3-8, then re-evaluate coverage. If the target is not met, repeat Steps 3-8 with a narrowed focus on remaining gaps. Use unique names for each iteration's `.testagent/` documents (e.g., `research-2.md`, `plan-2.md`) so earlier results are not overwritten. Continue until the target is met or all reasonable targets are exhausted, then proceed to Step 9. |
 
@@ -113,6 +113,8 @@ Run tests from the **full workspace scope** with a fresh build (never use `--no-
 **Verify tests are implementation-specific:**
 
 - Each test should assert on **concrete values** returned by the function — not just type checks, non-null checks, or other assertions that would still pass if the function body were empty or returned a default value. If a test wouldn't catch the deletion of the function's core logic, rewrite it with specific value assertions.
+- Verify tests assert on **exact formats, exact error messages, exact field values** — not loose substring matches or existence checks.
+- For functions that return structured data, assert on **all significant fields**, not just one.
 
 ### Step 8: Coverage Gap Iteration
 

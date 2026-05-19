@@ -86,10 +86,17 @@ Use the repo's existing lint script first (`make lint`, `tox -e lint`). Otherwis
 
 ## Test File Naming
 
+**Always search for the existing test file** that covers the module you're testing before creating a new file. For example, if you're testing `utils.py`, search for `test_utils.py`, `test_email_utils.py`, or similar. Add your tests to the existing file.
+
 Match the repo's existing conventions. Common patterns:
 
 - **pytest**: Files `test_*.py` or `*_test.py`, functions `test_` prefix, classes `Test` prefix
 - **Custom frameworks**: Use whatever format existing tests use (e.g. `.uts` for UTscapy, custom extensions)
+
+**Study existing test names** in the repo and replicate the exact pattern. For example:
+- If tests use `test_[function]_[scenario]`, follow that exactly
+- If using UTscapy `.uts` files, match the heading pattern (e.g., `= Test <function_name> function` or `= function_name() description`)
+- Do not invent a new naming pattern when the repo already has one
 
 If writing new tests in a repo with no tests, default to pytest conventions.
 

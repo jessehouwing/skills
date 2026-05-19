@@ -92,6 +92,9 @@ Locate all existing test files and analyze what they cover:
   - Number of test methods vs. number of public methods in the source
   - Whether tests cover only happy paths or also edge cases and error paths
 - Record the estimated coverage level per source file so the planner can prioritize gaps
+- **Map canonical test file locations**: For each source file, record the exact test file path where new tests should be added (e.g., `foo.go` → `foo_test.go`, `utils.py` → `test/test_utils.py`). This prevents creating duplicate test files.
+- **Extract naming patterns**: Read 3-5 existing test function names and document the exact naming convention used (e.g., `test_[function]_[scenario]`, `TestFoo_Scenario`, `= function() description`). Include this in the research output.
+- **Identify assertion idioms**: Note which assertion libraries and helper functions existing tests use (e.g., `require.EqualError`, `cmp.Diff`, custom comparison helpers, table-driven patterns). Include these in the research output so the implementer can replicate them.
 
 ### 8. Generate Research Document
 
@@ -140,6 +143,24 @@ Create `.testagent/research.md` with this structure:
 - [List existing test files and what source files they cover]
 - [Per source file: untested / partially tested / well tested]
 - [Or "No existing tests found"]
+
+## Test File Placement Map
+For each source file in scope, the canonical test file where new tests should go:
+| Source File | Canonical Test File | Status |
+|-------------|-------------------|--------|
+| path/to/foo.go | path/to/foo_test.go | Exists |
+| path/to/utils.py | tests/test_utils.py | Exists |
+
+## Test Naming Convention
+- Pattern: `[describe the exact naming pattern, e.g. test_[function]_[scenario]]`
+- Examples from existing tests:
+  - `test_add_header_plain_text`
+  - `TestBuildAPIURL_EmptyEndpoint`
+
+## Assertion Idioms
+- Assertion library: [e.g., testify/require, stdlib testing, pytest assert]
+- Custom helpers used: [e.g., cmp.Diff with options, custom comparison funcs]
+- Test structure: [e.g., table-driven with t.Run subtests, parametrized fixtures]
 
 ## Existing Test Projects
 For each test project found, list:

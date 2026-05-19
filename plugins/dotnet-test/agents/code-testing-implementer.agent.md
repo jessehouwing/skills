@@ -37,6 +37,7 @@ For each file in your phase:
 - **Trace the logic** for each code path you plan to test — understand what the function actually does, not what you think it should do
 - Note dependencies and how to mock them
 - **Validate project references**: Read the test project file and verify it references the source project(s) you'll test. Add missing references before creating test files
+- **Write mutation-resistant assertions**: Every test must assert on **concrete values** that the function computes — not just type checks (`isinstance`), non-null checks, or collection-length checks. Ask yourself: "If I deleted the core logic of this function, would this test still pass?" If yes, the assertion is too shallow. Assert on exact return values, specific field contents, exact string formats, and precise error messages.
 
 ### 3. Register Test Project with Build System
 
@@ -46,8 +47,10 @@ If the test project is new, register it with the project's build system so the t
 
 For each test file in your phase:
 
-- Create the test file with appropriate structure
-- Follow the project's testing patterns
+- **Prefer existing test files**: Search for an existing test file that covers the same source module (e.g., `foo_test.go` for `foo.go`, `test_utils.py` for `utils.py`, `executor_test.go` for `executor.go`). **Add your tests to the existing file** rather than creating a new one. Only create a new test file when no canonical test file exists for the module under test.
+- Follow the project's testing patterns — study how existing tests are structured, what helpers they use, and what assertion style they follow
+- **Adopt repo-specific test idioms**: If existing tests use table-driven patterns (Go), parametrized fixtures (Python), or custom assertion/comparison helpers, use those same patterns in your new tests
+- **Match the naming convention**: Study existing test names in the repo. Copy the exact naming pattern (e.g., `test_[function]_[scenario]`, `Test<Function>_<Scenario>`, `= function() description`) — do not invent a new pattern
 - Include tests for: happy path, edge cases (empty, null, boundary), error conditions
 - Mock all external dependencies — never call external URLs, bind ports, or depend on timing
 

@@ -72,9 +72,11 @@ Use the repo's lint script first. Otherwise detect from `devDependencies` and co
 
 ## Test File Naming
 
+- **Always search for the existing test file** for the module you're testing before creating a new file. If `module.test.ts` or `module.spec.ts` already exists, add your tests there.
 - Match existing convention — check for `.test.ts` vs `.spec.ts`
 - Jest/Vitest default: `*.test.ts`, `*.spec.ts`, or files inside `__tests__/`
 - Place test files to mirror the existing project pattern
+- **Study existing test names** in the repo and replicate the exact pattern for `describe` blocks, `it`/`test` names, and test organization
 
 ## Common Errors
 

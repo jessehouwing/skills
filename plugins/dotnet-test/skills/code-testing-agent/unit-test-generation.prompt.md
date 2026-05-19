@@ -70,6 +70,32 @@ Before writing tests:
 
 Apply this analysis to the **entire** code scope, not just a portion.
 
+## Mutation-Resistant Assertions
+
+Every test must be written so that **deleting or mutating the core logic of the function under test would cause the test to fail**. Avoid these weak assertion patterns:
+
+| Weak Pattern | Why It Fails | Better Alternative |
+|---|---|---|
+| `assert isinstance(result, MyType)` | Passes even if function returns default/empty instance | Assert on specific field values: `assert result.name == "expected"` |
+| `assert result is not None` | Passes if function returns any non-None value | Assert exact return value: `assert result == expected_value` |
+| `assert len(results) > 0` | Passes for any non-empty result | Assert exact count and content: `assert len(results) == 3` and check each element |
+| `assert "error" in str(e)` | Too loose — matches any error string | Assert exact error message: `assert str(e) == "specific error message"` |
+| `assert result.status == "ok"` | Only checks one field | Assert ALL significant fields of the result |
+
+**The litmus test**: For each assertion, ask "If I replaced the function body with `return default_value`, would this test still pass?" If yes, strengthen the assertion.
+
+## Test File Placement
+
+**Always add tests to the existing canonical test file** for the module being tested. Search for the test file that already covers the source file (e.g., `foo_test.go` for `foo.go`, `test_utils.py` for `utils.py`, `executor_test.go` for `executor.go`). Only create a new file when no existing test file covers the module.
+
+## Test Style Adoption
+
+**Study and replicate the repo's testing idioms exactly**:
+
+- If existing tests use **table-driven patterns** (Go `[]struct` with `t.Run`), use the same pattern — do not use individual test functions
+- If existing tests use **specific assertion helpers** (e.g., `require.EqualError`, `cmp.Diff` with custom options), use those same helpers — do not fall back to basic `assert` or `require.Equal`
+- If existing tests follow a **specific naming convention** (e.g., `test_[function]_[scenario]`, `= function() description`), follow it exactly — do not invent your own
+
 ## Coverage Types
 
 | Type                  | Examples                                                            |
