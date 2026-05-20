@@ -49,6 +49,9 @@ Based on the request scope, pick exactly one strategy and follow it:
 > **FIRST**: If you have not yet loaded the language extension file (Step 1 above), do it now before proceeding. Use `glob` with `**/code-testing-extensions/extensions/{lang}.md` to find it, then `view` it. This is not optional.
 
 1. **Extract every testable requirement** from the user request — list each specific behavior, scenario, edge case, error condition, or output format mentioned. Each one becomes a test or table-driven row. This is your checklist.
+   - **Decompose compound requests**: If the prompt says "with and without X", that is at least 2 tests. "Both A and B" means separate tests for A and for B. "Including handling the case when..." introduces an additional test case.
+   - **Use exact API names**: If the prompt mentions specific types/functions (e.g., `BitExtendedField.i2m()`, `TimeWheel.Add()`), test those exact APIs — do not substitute with wrapper functions or similar APIs even if they seem equivalent.
+   - **Include negative cases**: For matching/validation logic, test both cases that SHOULD match and cases that SHOULD NOT match (e.g., partial substring matches that must be rejected).
 
 2. **Find and use the canonical test file** — search for the existing test file that covers the module under test (e.g., `foo_test.go` for `foo.go`, `test_utils.py` for `utils.py`, `module.test.ts` for `module.ts`). **Add tests to that existing file** rather than creating a new one. For `.uts` files (UTscapy), find the right section in the existing `.uts` file and append tests there.
 
@@ -62,6 +65,8 @@ Based on the request scope, pick exactly one strategy and follow it:
    - **WRONG**: `assert isinstance(result, int)`, `assert result is not None`, `assert len(results) > 0`
    - **RIGHT**: `assert result == 0x0A06`, `assert result == "expected_string"`, `require.Equal(t, expected, got)`
    - Ask: "If I deleted the function body, would this test still pass?" If yes, the assertion is too weak.
+   - **Assert on internal state too**: Don't just check the return value — also verify internal state changes (buffer contents, cursor positions, field values, cache entries) when the rubric or prompt mentions them.
+   - **Each test should catch at least one unique mutation**: If you removed one line from the production code, at least one of your tests must fail. Tests that pass regardless of implementation are worthless.
 
 5. **Cover error paths** — find every `return err`, `raise`, `panic`, `throw` in the function body. Each one needs a test that triggers it with a specific input and asserts on the exact error message/type.
 
