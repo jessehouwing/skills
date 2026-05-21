@@ -292,18 +292,18 @@ public static class AgentRunner
             sdkMcp = new Dictionary<string, McpServerConfig>();
             foreach (var (name, def) in mcpServers)
             {
-                if (!IsAllowedMcpCommand(def.Command))
-                {
-                    Console.Error.WriteLine(
-                        $"Skipping MCP server '{name}': command '{def.Command}' is not in the allowlist");
-                    continue;
-                }
-
                 // Only stdio servers are supported; reject unknown types early.
                 if (def.Type is not null and not "stdio")
                 {
                     Console.Error.WriteLine(
                         $"Skipping MCP server '{name}': unsupported type '{def.Type}' (only 'stdio' is supported)");
+                    continue;
+                }
+
+                if (!IsAllowedMcpCommand(def.Command))
+                {
+                    Console.Error.WriteLine(
+                        $"Skipping MCP server '{name}': command '{def.Command}' is not in the allowlist");
                     continue;
                 }
 
