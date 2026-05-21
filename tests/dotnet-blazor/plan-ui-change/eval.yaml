@@ -118,8 +118,9 @@ scenarios:
 
   - name: "Multi-step job application wizard"
     prompt: |
-      Build a Blazor page for a multi-step job application form. Here are the service contracts
-      already registered in DI:
+      Build a Blazor page for a multi-step job application form. This has many
+      distinct visual sections and shared state — plan the component decomposition
+      before writing code. Here are the service contracts already registered in DI:
 
       ```csharp
       public record JobApplication(PersonalInfo Personal, WorkHistory Work, List<Reference> References, string CoverLetter);
@@ -276,7 +277,9 @@ scenarios:
 
   - name: "Team chat interface with message threads"
     prompt: |
-      Build a Blazor page for a team messaging app. Here are the service contracts
+      Build a Blazor page for a team messaging app. This is a complex multi-panel
+      layout with a sidebar, main area, and collapsible thread panel — plan the
+      component structure and data flow before writing code. Here are the service contracts
       already registered in DI:
 
       ```csharp

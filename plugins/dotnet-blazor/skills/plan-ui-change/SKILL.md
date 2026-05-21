@@ -5,8 +5,10 @@ description: >
   Plan complex Blazor UI features by decomposing them into focused components.
   USE FOR: building a complex Blazor page, planning component decomposition,
   designing a multi-section dashboard or layout, breaking down a large UI feature
-  into composable components, identifying parent-child relationships and data flow
-  before writing code.
+  into composable components, building multi-step wizards with shared state,
+  chat interfaces with sidebars and panels, any page request with 3+ distinct
+  visual sections or multiple interacting sub-features, identifying parent-child
+  relationships and data flow before writing code.
   DO NOT USE FOR: implementing individual components (use author-component),
   creating new projects (use create-blazor-project), or simple single-component pages.
 ---

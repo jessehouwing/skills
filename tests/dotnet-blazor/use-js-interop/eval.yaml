@@ -75,10 +75,11 @@ scenarios:
 
   - name: "Drag-and-drop file upload zone"
     prompt: |
-      I need a `FileDropZone` component for my Blazor Web App.
+      I need a `FileDropZone` component for my Blazor Web App that uses JavaScript
+      interop for native drag-and-drop events.
 
       Requirements:
-      - A styled rectangular drop area where users can drag and drop files
+      - A styled rectangular drop area where users can drag and drop files (use the native JS drag-and-drop API)
       - Shows a visual highlight when files are being dragged over the zone (CSS class change)
       - When files are dropped, displays each file's name, size, and type in a list below the zone
       - Files larger than 10MB should be shown with an error message instead (not rejected silently)
