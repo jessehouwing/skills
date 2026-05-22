@@ -3,15 +3,16 @@ license: MIT
 name: plan-ui-change
 description: >
   Plan complex Blazor UI features by decomposing them into focused components.
-  USE FOR: planning component decomposition for a complex Blazor page,
-  designing a multi-section dashboard or layout, breaking down a large UI feature
-  into composable components, planning the architecture for chat interfaces with
-  sidebars and panels, any page request with 3+ distinct visual sections or
-  multiple interacting sub-features, identifying parent-child relationships and
-  data flow before writing code.
-  DO NOT USE FOR: implementing individual components (use author-component),
-  writing component code with parameters and EventCallback (use author-component),
-  creating new projects (use create-blazor-project), or simple single-component pages.
+  USE FOR: building a complex Blazor page with multiple sections, planning
+  component decomposition, designing a multi-section dashboard or layout,
+  breaking down a large UI feature into composable components, pages with
+  sidebars and content panels, any page with 3+ distinct visual sections
+  or multiple interacting sub-features, identifying parent-child relationships
+  and data flow.
+  DO NOT USE FOR: creating new Blazor projects or apps from scratch
+  (use create-blazor-project), implementing a single individual component
+  (use author-component), writing component code with parameters and
+  EventCallback (use author-component), or simple single-component pages.
 ---
 
 # Plan a Blazor UI Change
