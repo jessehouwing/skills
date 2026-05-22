@@ -307,7 +307,7 @@ public static class AgentRunner
                     continue;
                 }
 
-                var sanitizedArgs = SanitizeMcpArgs(def.Command, def.Args);
+                var sanitizedArgs = SanitizeMcpArgs(def.Command, def.Args ?? []);
                 if (sanitizedArgs is null)
                 {
                     Console.Error.WriteLine(
@@ -317,7 +317,7 @@ public static class AgentRunner
 
                 var entry = new McpStdioServerConfig
                 {
-                    Command = def.Command,
+                    Command = def.Command!,
                     Args = sanitizedArgs,
                     Tools = def.Tools ?? ["*"],
                 };
@@ -945,8 +945,11 @@ public static class AgentRunner
         "dotnet", "dnx", "node", "npx", "python", "python3", "uvx",
     };
 
-    internal static bool IsAllowedMcpCommand(string command)
+    internal static bool IsAllowedMcpCommand(string? command)
     {
+        if (string.IsNullOrEmpty(command))
+            return false;
+
         // Only allow bare command names (resolved via PATH), not paths.
         if (command.Contains(Path.DirectorySeparatorChar) ||
             command.Contains(Path.AltDirectorySeparatorChar) ||
@@ -1005,8 +1008,11 @@ public static class AgentRunner
             ["uvx"] = new(StringComparer.Ordinal) { "--from" },
         };
 
-    internal static string[]? SanitizeMcpArgs(string command, string[] args)
+    internal static string[]? SanitizeMcpArgs(string? command, string[] args)
     {
+        if (string.IsNullOrEmpty(command))
+            return args;
+
         var cmdName = Path.GetFileNameWithoutExtension(command);
         if (!DangerousMcpArgs.TryGetValue(cmdName, out var blocked))
             return args;
