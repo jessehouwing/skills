@@ -640,17 +640,18 @@ jobs:
           RESULTS_PATH: artifacts/TestResults/skill-validator/${{ matrix.entry.name }}
           HAS_MCP: ${{ steps.detect-mcp.outputs.has_mcp }}
           # When a plugin declares MCP servers, every session spawns extra
-          # `dotnet dnx <mcp-package>` child processes. Running these in
-          # parallel on ubuntu-latest (16 GB RAM, 2 vCPU) reliably exhausts
-          # memory / NuGet-cache I/O and gets the runner SIGTERM'd before the
-          # Upload results step runs — which is why scheduled runs since
-          # 2026-05-20 produced no dashboard data for dotnet-msbuild.
-          # In that case force every PARALLEL_* knob to 1 (serial execution),
-          # but keep RUNS unchanged so CV stays meaningful.
+          # `dotnet dnx <mcp-package>` child processes. Running these at the
+          # default 18-way concurrency on ubuntu-latest (16 GB RAM, 2 vCPU)
+          # reliably exhausts memory / NuGet-cache I/O and gets the runner
+          # SIGTERM'd before the Upload results step runs — which is why
+          # scheduled runs since 2026-05-20 produced no dashboard data for
+          # dotnet-msbuild. Cap at 1 × 2 × 2 = 4 concurrent sessions, keeping
+          # the cold dnx restore on a single session at startup. RUNS stays
+          # unchanged so CV remains meaningful.
           RUNS: ${{ needs.discover.outputs.is_infra == 'true' && '1' || (github.event_name == 'schedule' && '5' || '3') }}
           PARALLEL_SKILLS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '2' || '5') }}
-          PARALLEL_SCENARIOS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
-          PARALLEL_RUNS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
+          PARALLEL_SCENARIOS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '2' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
+          PARALLEL_RUNS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '2' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
         run: |
           ARGS="--verdict-warn-only --verbose"
           ARGS="$ARGS --results-dir $RESULTS_PATH --reporter console --reporter json --reporter markdown"
