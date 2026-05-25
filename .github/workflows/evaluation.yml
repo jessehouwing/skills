@@ -273,7 +273,7 @@ jobs:
     needs: gate
     if: >-
       always() &&
-      (needs.gate.result == 'success' || github.event_name == 'schedule') &&
+      (needs.gate.result == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
       (github.event_name != 'schedule' || github.repository == 'dotnet/skills')
     runs-on: ubuntu-latest
     permissions:
@@ -328,7 +328,7 @@ jobs:
           fi
 
       - name: Checkout repository
-        if: github.event_name != 'schedule' || steps.check-changes.outputs.has_changes == 'true'
+        if: github.event_name != 'schedule' || steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
@@ -339,11 +339,27 @@ jobs:
         run: git fetch origin +refs/pull/${{ needs.gate.outputs.pr_number }}/head:refs/remotes/origin/pr-head
 
       - name: Find skills to evaluate
-        if: github.event_name != 'schedule' || steps.check-changes.outputs.has_changes == 'true'
+        if: github.event_name != 'schedule' || steps.check-changes.outputs.has_changes == 'true' || github.event_name == 'workflow_dispatch'
         id: find
         run: |
           $entries = @()
           $plugins = @()
+
+          # TEMP: workflow_dispatch path — evaluate ONLY dotnet-msbuild (for MCP parallelism testing)
+          if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            $plugins = @('dotnet-msbuild')
+            $entries = @($plugins | ForEach-Object {
+              @{ name = $_; plugin = $_; skills_path = "plugins/$_/skills" }
+            })
+            Write-Host "workflow_dispatch: evaluating only $($plugins -join ', ')"
+            $json = $entries | ConvertTo-Json -Compress -AsArray
+            echo "entries=$json" >> $env:GITHUB_OUTPUT
+            echo "has_entries=true" >> $env:GITHUB_OUTPUT
+            $cjson = $plugins | ConvertTo-Json -Compress -AsArray
+            echo "plugins=$cjson" >> $env:GITHUB_OUTPUT
+            echo "has_plugins=true" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
 
           if ("${{ github.event_name }}" -eq "issue_comment") {
             # /evaluate command: detect individual changed skills using gate outputs
@@ -463,7 +479,7 @@ jobs:
       always() &&
       needs.discover.outputs.has_entries == 'true' &&
       needs.discover.result == 'success' &&
-      (needs.gate.result == 'success' || github.event_name == 'schedule')
+      (needs.gate.result == 'success' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -607,14 +623,34 @@ jobs:
           echo "::add-mask::${TOKENS[$IDX]}"
           echo "token=${TOKENS[$IDX]}" >> $GITHUB_OUTPUT
 
+      - name: Detect plugin MCP usage
+        id: detect-mcp
+        run: |
+          PLUGIN_JSON="plugins/${{ matrix.entry.plugin }}/plugin.json"
+          HAS_MCP=false
+          if [ -f "$PLUGIN_JSON" ] && grep -q '"mcpServers"' "$PLUGIN_JSON"; then
+            HAS_MCP=true
+            echo "::notice::Plugin ${{ matrix.entry.plugin }} declares MCP servers — forcing serial execution to avoid runner OOM."
+          fi
+          echo "has_mcp=$HAS_MCP" >> "$GITHUB_OUTPUT"
+
       - name: Run skill-validator
         env:
           GITHUB_TOKEN: ${{ steps.select-token.outputs.token }}
           RESULTS_PATH: artifacts/TestResults/skill-validator/${{ matrix.entry.name }}
+          HAS_MCP: ${{ steps.detect-mcp.outputs.has_mcp }}
+          # When a plugin declares MCP servers, every session spawns extra
+          # `dotnet dnx <mcp-package>` child processes. Running these in
+          # parallel on ubuntu-latest (16 GB RAM, 2 vCPU) reliably exhausts
+          # memory / NuGet-cache I/O and gets the runner SIGTERM'd before the
+          # Upload results step runs — which is why scheduled runs since
+          # 2026-05-20 produced no dashboard data for dotnet-msbuild.
+          # In that case force every PARALLEL_* knob to 1 (serial execution),
+          # but keep RUNS unchanged so CV stays meaningful.
           RUNS: ${{ needs.discover.outputs.is_infra == 'true' && '1' || (github.event_name == 'schedule' && '5' || '3') }}
-          PARALLEL_SKILLS: ${{ (needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '2' || '5' }}
-          PARALLEL_SCENARIOS: ${{ (needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5' }}
-          PARALLEL_RUNS: ${{ (needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5' }}
+          PARALLEL_SKILLS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '2' || '5') }}
+          PARALLEL_SCENARIOS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
+          PARALLEL_RUNS: ${{ steps.detect-mcp.outputs.has_mcp == 'true' && '1' || ((needs.discover.outputs.is_infra == 'true' || github.event_name == 'schedule') && '3' || '5') }}
         run: |
           ARGS="--verdict-warn-only --verbose"
           ARGS="$ARGS --results-dir $RESULTS_PATH --reporter console --reporter json --reporter markdown"
@@ -625,6 +661,8 @@ jobs:
           ARGS="$ARGS --parallel-scenarios $PARALLEL_SCENARIOS"
           ARGS="$ARGS --parallel-runs $PARALLEL_RUNS"
           ARGS="$ARGS --keep-sessions"
+
+          echo "Effective parallelism: runs=$RUNS skills=$PARALLEL_SKILLS scenarios=$PARALLEL_SCENARIOS runs-parallel=$PARALLEL_RUNS (has_mcp=$HAS_MCP)"
 
           artifacts/publish/SkillValidator/release/skill-validator evaluate $ARGS --tests-dir ./tests/${{ matrix.entry.plugin }} ./${{ matrix.entry.skills_path }}
 
