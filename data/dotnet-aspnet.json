@@ -3,113 +3,6 @@
   "entries": {
     "Quality": [
       {
-        "commit": {
-          "id": "fe11dec69d961599bbb9a62d1ba32a475cee0317",
-          "timestamp": "2026-05-11T19:29:36+00:00",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Dan Moseley"
-          },
-          "url": "https://github.com/dotnet/skills/commit/fe11dec69d961599bbb9a62d1ba32a475cee0317",
-          "message": "Update .NET 10→11 migration skill for Preview 2 and 3 (#628)"
-        },
-        "date": 1778557784300,
-        "benches": [
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Quality",
-            "value": 9.600000381469727
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Quality",
-            "value": 9.600000381469727
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Quality",
-            "value": 7.599999904632568
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Quality",
-            "value": 6.400000095367432
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Quality",
-            "value": 7.199999809265137
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Quality",
-            "value": 6.400000095367432
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Quality",
-            "value": 6.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Quality",
-            "value": 10.0
-          },
-          {
-            "unit": "Score (0-10)",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Quality",
-            "value": 10.0
-          }
-        ],
-        "model": "claude-opus-4.6",
-        "tool": "customBiggerIsBetter"
-      },
-      {
         "model": "claude-opus-4.6",
         "tool": "customBiggerIsBetter",
         "date": 1778644491020,
@@ -1856,206 +1749,188 @@
           }
         ],
         "date": 1779764211504
-      }
-    ],
-    "Efficiency": [
+      },
       {
-        "commit": {
-          "id": "fe11dec69d961599bbb9a62d1ba32a475cee0317",
-          "timestamp": "2026-05-11T19:29:36+00:00",
-          "author": {
-            "username": "JanKrivanek",
-            "name": "Dan Moseley"
-          },
-          "url": "https://github.com/dotnet/skills/commit/fe11dec69d961599bbb9a62d1ba32a475cee0317",
-          "message": "Update .NET 10→11 migration skill for Preview 2 and 3 (#628)"
-        },
-        "date": 1778557784300,
+        "tool": "customBiggerIsBetter",
         "benches": [
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Time",
-            "value": 29.4
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Tokens In",
-            "value": 28709.0
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Time",
-            "value": 27.8
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 8.0
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Tokens In",
-            "value": 28866.0
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Time",
-            "value": 23.9
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 9.600000381469727
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Tokens In",
-            "value": 13093.0
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 6.400000095367432
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Time",
-            "value": 25.9
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Tokens In",
-            "value": 28187.0
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Time",
-            "value": 26.3
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Tokens In",
-            "value": 28334.0
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 8.399999618530273
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Time",
-            "value": 17.1
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 9.600000381469727
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Tokens In",
-            "value": 12639.0
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 4.400000095367432
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Time",
-            "value": 25.5
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Tokens In",
-            "value": 28399.0
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Time",
-            "value": 22.7
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 5.599999904632568
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Tokens In",
-            "value": 28387.0
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137
           },
           {
-            "unit": "seconds",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Time",
-            "value": 21.3
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 8.0
           },
           {
-            "unit": "tokens",
-            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Tokens In",
-            "value": 12684.0
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 5.599999904632568
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Time",
-            "value": 26.8
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Tokens In",
-            "value": 28392.0
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Time",
-            "value": 27.8
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 8.0
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Tokens In",
-            "value": 28450.0
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Time",
-            "value": 19.0
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Tokens In",
-            "value": 12684.0
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 8.0
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Time",
-            "value": 30.6
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Tokens In",
-            "value": 28258.0
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Time",
-            "value": 27.9
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 7.599999904632568
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Tokens In",
-            "value": 28419.0
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Time",
-            "value": 19.2
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Quality",
+            "unit": "Score (0-10)",
+            "value": 10.0
           },
           {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Tokens In",
-            "value": 12612.0
-          },
-          {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Time",
-            "value": 25.6
-          },
-          {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Tokens In",
-            "value": 28034.0
-          },
-          {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Time",
-            "value": 21.0
-          },
-          {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Tokens In",
-            "value": 28215.0
-          },
-          {
-            "unit": "seconds",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Time",
-            "value": 23.2
-          },
-          {
-            "unit": "tokens",
-            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Tokens In",
-            "value": 12768.0
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Quality",
+            "unit": "Score (0-10)",
+            "value": 9.199999809265137
           }
         ],
         "model": "claude-opus-4.6",
-        "tool": "customSmallerIsBetter"
-      },
+        "commit": {
+          "url": "https://github.com/dotnet/skills/commit/a9c35454f22bb2c6c640bb90ae56625e826f9a82",
+          "id": "a9c35454f22bb2c6c640bb90ae56625e826f9a82",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "dependabot[bot]"
+          },
+          "message": "Bump github/gh-aw-actions in the github-actions-dependencies group (#678)",
+          "timestamp": "2026-05-26T09:04:16+00:00"
+        },
+        "date": 1779850006599
+      }
+    ],
+    "Efficiency": [
       {
         "model": "claude-opus-4.6",
         "tool": "customSmallerIsBetter",
@@ -5330,8 +5205,349 @@
           }
         ],
         "date": 1779764211504
+      },
+      {
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Time",
+            "unit": "seconds",
+            "value": 21.4
+          },
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29469.0
+          },
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Time",
+            "unit": "seconds",
+            "value": 24.2
+          },
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30367.0
+          },
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Time",
+            "unit": "seconds",
+            "value": 13.8
+          },
+          {
+            "name": "minimal-api-file-upload/Implement secure file upload in ASP.NET Core 8 minimal API - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13192.0
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Time",
+            "unit": "seconds",
+            "value": 24.3
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29277.0
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Time",
+            "unit": "seconds",
+            "value": 23.9
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30207.0
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Time",
+            "unit": "seconds",
+            "value": 13.9
+          },
+          {
+            "name": "minimal-api-file-upload/Upload multiple files with metadata in minimal API - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13147.0
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Time",
+            "unit": "seconds",
+            "value": 20.1
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29052.0
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Time",
+            "unit": "seconds",
+            "value": 23.2
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30102.0
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Time",
+            "unit": "seconds",
+            "value": 22.2
+          },
+          {
+            "name": "minimal-api-file-upload/Stream very large file uploads without buffering - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13516.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Skilled Time",
+            "unit": "seconds",
+            "value": 160.5
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 533617.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Plugin Time",
+            "unit": "seconds",
+            "value": 133.8
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 384889.0
+          },
+          {
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Vanilla Time",
+            "unit": "seconds",
+            "value": 105.9
+          },
+          {
+            "name": "dotnet-webapi/Create a CRUD Web API with minimal APIs, OpenAPI, and proper HTTP semantics - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 251946.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Skilled Time",
+            "unit": "seconds",
+            "value": 21.7
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 35914.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Plugin Time",
+            "unit": "seconds",
+            "value": 21.3
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 32904.0
+          },
+          {
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Vanilla Time",
+            "unit": "seconds",
+            "value": 22.3
+          },
+          {
+            "name": "dotnet-webapi/Add error handling with ProblemDetails and IExceptionHandler - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 24178.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Skilled Time",
+            "unit": "seconds",
+            "value": 43.5
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 108772.0
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Plugin Time",
+            "unit": "seconds",
+            "value": 46.1
+          },
+          {
+            "overfittingScore": 0.28,
+            "overfitting": "moderate",
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 106852.0
+          },
+          {
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Vanilla Time",
+            "unit": "seconds",
+            "value": 36.2
+          },
+          {
+            "name": "dotnet-webapi/Add a new API endpoint to an existing controller-based project - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 71472.0
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Skilled Time",
+            "unit": "seconds",
+            "value": 17.7
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 32731.0
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Plugin Time",
+            "unit": "seconds",
+            "value": 18.0
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 33228.0
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Vanilla Time",
+            "unit": "seconds",
+            "value": 11.9
+          },
+          {
+            "name": "convert-blazor-server-to-webapp/Blazor Server app with CascadingAuthenticationState - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 14082.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Time",
+            "unit": "seconds",
+            "value": 16.8
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29692.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Time",
+            "unit": "seconds",
+            "value": 17.4
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30628.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Time",
+            "unit": "seconds",
+            "value": 15.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Set up OpenTelemetry tracing and metrics with custom spans in ASP.NET Core - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13477.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Time",
+            "unit": "seconds",
+            "value": 14.5
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29380.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Time",
+            "unit": "seconds",
+            "value": 14.2
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30272.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Time",
+            "unit": "seconds",
+            "value": 10.5
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Configure all three OpenTelemetry signals with correct OTLP export - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13129.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Time",
+            "unit": "seconds",
+            "value": 18.1
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Skilled Tokens In",
+            "unit": "tokens",
+            "value": 29394.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Time",
+            "unit": "seconds",
+            "value": 17.4
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Plugin Tokens In",
+            "unit": "tokens",
+            "value": 30386.0
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Time",
+            "unit": "seconds",
+            "value": 15.2
+          },
+          {
+            "name": "configuring-opentelemetry-dotnet/Propagate trace context across a message queue - Vanilla Tokens In",
+            "unit": "tokens",
+            "value": 13254.0
+          }
+        ],
+        "model": "claude-opus-4.6",
+        "commit": {
+          "url": "https://github.com/dotnet/skills/commit/a9c35454f22bb2c6c640bb90ae56625e826f9a82",
+          "id": "a9c35454f22bb2c6c640bb90ae56625e826f9a82",
+          "author": {
+            "username": "JanKrivanek",
+            "name": "dependabot[bot]"
+          },
+          "message": "Bump github/gh-aw-actions in the github-actions-dependencies group (#678)",
+          "timestamp": "2026-05-26T09:04:16+00:00"
+        },
+        "date": 1779850006599
       }
     ]
   },
-  "lastUpdate": 1779764211504
+  "lastUpdate": 1779850006599
 }
