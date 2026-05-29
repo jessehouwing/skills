@@ -374,6 +374,31 @@ public class BuildSessionConfigTests
     }
 
     [Fact]
+    public async Task SkipsUnsupportedHttpMcpServerWithoutCrashing()
+    {
+        var mcpServers = new Dictionary<string, MCPServerDef>
+        {
+            ["microsoft-docs"] = new(Type: "http", Url: "https://learn.microsoft.com/api/mcp", Tools: ["*"]),
+            ["good"] = new(Command: "node", Args: ["server.js"], Tools: ["*"]),
+        };
+        var config = await AgentRunner.BuildSessionConfig(MockSkill, null, "gpt-4.1", "C:\\tmp\\work", mcpServers);
+        Assert.NotNull(config.McpServers);
+        Assert.True(config.McpServers.ContainsKey("good"));
+        Assert.False(config.McpServers.ContainsKey("microsoft-docs"));
+    }
+
+    [Fact]
+    public async Task SkipsStdioMcpServerWithoutCommand()
+    {
+        var mcpServers = new Dictionary<string, MCPServerDef>
+        {
+            ["broken"] = new(Args: ["server.js"], Tools: ["*"]),
+        };
+        var config = await AgentRunner.BuildSessionConfig(MockSkill, null, "gpt-4.1", "C:\\tmp\\work", mcpServers);
+        Assert.Null(config.McpServers);
+    }
+
+    [Fact]
     public async Task RejectsMcpServerWithDangerousArgs()
     {
         var mcpServers = new Dictionary<string, MCPServerDef>
@@ -520,7 +545,14 @@ public class ExtractPathFromToolArgsTests
 
 public class IsAllowedMcpCommandTests
 {
+    [Fact]
+    public void RejectsNullCommand()
+    {
+        Assert.False(AgentRunner.IsAllowedMcpCommand(null));
+    }
+
     [Theory]
+    [InlineData("", false)]
     [InlineData("dotnet", true)]
     [InlineData("node", true)]
     [InlineData("npx", true)]
@@ -533,7 +565,7 @@ public class IsAllowedMcpCommandTests
     [InlineData("wget", false)]
     [InlineData("cmd", false)]
     [InlineData("powershell", false)]
-    public void ValidatesCommand(string command, bool expected)
+    public void ValidatesCommand(string? command, bool expected)
     {
         Assert.Equal(expected, AgentRunner.IsAllowedMcpCommand(command));
     }

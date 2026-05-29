@@ -292,18 +292,25 @@ public static class AgentRunner
             sdkMcp = new Dictionary<string, McpServerConfig>();
             foreach (var (name, def) in mcpServers)
             {
-                if (!IsAllowedMcpCommand(def.Command))
-                {
-                    Console.Error.WriteLine(
-                        $"Skipping MCP server '{name}': command '{def.Command}' is not in the allowlist");
-                    continue;
-                }
-
                 // Only stdio servers are supported; reject unknown types early.
                 if (def.Type is not null and not "stdio")
                 {
                     Console.Error.WriteLine(
                         $"Skipping MCP server '{name}': unsupported type '{def.Type}' (only 'stdio' is supported)");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(def.Command))
+                {
+                    Console.Error.WriteLine(
+                        $"Skipping MCP server '{name}': missing required command for stdio MCP server");
+                    continue;
+                }
+
+                if (!IsAllowedMcpCommand(def.Command))
+                {
+                    Console.Error.WriteLine(
+                        $"Skipping MCP server '{name}': command '{def.Command}' is not in the allowlist");
                     continue;
                 }
 
@@ -945,8 +952,11 @@ public static class AgentRunner
         "dotnet", "dnx", "node", "npx", "python", "python3", "uvx",
     };
 
-    internal static bool IsAllowedMcpCommand(string command)
+    internal static bool IsAllowedMcpCommand(string? command)
     {
+        if (string.IsNullOrWhiteSpace(command))
+            return false;
+
         // Only allow bare command names (resolved via PATH), not paths.
         if (command.Contains(Path.DirectorySeparatorChar) ||
             command.Contains(Path.AltDirectorySeparatorChar) ||
@@ -1005,8 +1015,10 @@ public static class AgentRunner
             ["uvx"] = new(StringComparer.Ordinal) { "--from" },
         };
 
-    internal static string[]? SanitizeMcpArgs(string command, string[] args)
+    internal static string[]? SanitizeMcpArgs(string command, string[]? args)
     {
+        args ??= [];
+
         var cmdName = Path.GetFileNameWithoutExtension(command);
         if (!DangerousMcpArgs.TryGetValue(cmdName, out var blocked))
             return args;

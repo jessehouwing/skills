@@ -3,12 +3,14 @@ namespace SkillValidator.Shared;
 // --- MCP server definition (from plugin.json) ---
 
 public sealed record MCPServerDef(
-    string Command,
-    string[] Args,
+    string? Command = null,
+    string[]? Args = null,
     string? Type = null,
     string[]? Tools = null,
     Dictionary<string, string>? Env = null,
-    string? Cwd = null);
+    string? Cwd = null,
+    string? Url = null,
+    Dictionary<string, string>? Headers = null);
 
 // --- Skill info ---
 

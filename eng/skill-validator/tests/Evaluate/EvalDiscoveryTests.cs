@@ -72,6 +72,42 @@ public class EvalDiscoveryTests
     }
 
     [Fact]
+    public async Task FindsHttpPluginMcpServersWithoutSynthesizingStdioFields()
+    {
+        var tmpDir = Path.Combine(Path.GetTempPath(), $"skill-test-{Guid.NewGuid():N}");
+        var skillDir = Path.Combine(tmpDir, "skills", "my-skill");
+        Directory.CreateDirectory(skillDir);
+        try
+        {
+            var pluginJson = """
+                {
+                    "mcpServers": {
+                        "microsoft-docs": {
+                            "type": "http",
+                            "url": "https://learn.microsoft.com/api/mcp",
+                            "headers": {},
+                            "tools": ["*"]
+                        }
+                    }
+                }
+                """;
+            await File.WriteAllTextAsync(Path.Combine(tmpDir, "plugin.json"), pluginJson, TestContext.Current.CancellationToken);
+
+            var result = await EvaluateCommand.FindPluginMcpServers(skillDir);
+            Assert.NotNull(result);
+            Assert.True(result!.ContainsKey("microsoft-docs"));
+            Assert.Equal("http", result["microsoft-docs"].Type);
+            Assert.Equal("https://learn.microsoft.com/api/mcp", result["microsoft-docs"].Url);
+            Assert.Null(result["microsoft-docs"].Command);
+            Assert.Null(result["microsoft-docs"].Args);
+        }
+        finally
+        {
+            Directory.Delete(tmpDir, true);
+        }
+    }
+
+    [Fact]
     public async Task ReturnsNullWhenNoPluginJson()
     {
         var tmpDir = Path.Combine(Path.GetTempPath(), $"skill-test-{Guid.NewGuid():N}");

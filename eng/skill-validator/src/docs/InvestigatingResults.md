@@ -83,6 +83,8 @@ Each scenario includes two required runs (baseline + isolated). It may also incl
 
 > **Note:** Scenarios do not have a `passed` field. To determine pass/fail for an individual scenario, check whether `improvementScore >= 0`. This is the effective score: when no plugin run is present it equals `isolatedImprovementScore`; when a plugin run is present it is the min of isolated and plugin scores. The `passed` field exists only at the verdict level (per-skill).
 
+> **Note:** During evaluation, skill-validator currently loads only stdio MCP servers. Plugin MCP entries with other types (for example `type: http`) are skipped with a stderr message instead of failing the run.
+
 ### Breakdown fields
 
 The `isolatedBreakdown` and `pluginBreakdown` objects show how each metric contributed to the improvement score. Each field is a raw delta (not yet weighted). The final score is computed as a weighted sum:
