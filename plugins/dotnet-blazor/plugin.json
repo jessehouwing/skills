@@ -2,5 +2,19 @@
   "name": "dotnet-blazor",
   "version": "0.1.0",
   "description": "Skills for Blazor development: component authoring, interactivity, and web application patterns.",
-  "skills": ["./skills/"]
+  "skills": ["./skills/"],
+  "mcpServers": {
+    "microsoft-docs": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "headers": {},
+      "tools": ["*"]
+    },
+    "playwright": {
+      "type": "local",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "tools": ["*"]
+    }
+  }
 }
