@@ -99,6 +99,8 @@ Run a **full workspace build** (not just individual test projects). This catches
 - **TypeScript**: `npx tsc --noEmit` from workspace root
 - **Go**: `go build ./...` from module root
 - **Rust**: `cargo build`
+- **C++ (CMake)**: `cmake --build build -j` from project root (configure first if needed)
+- **C++ (MSBuild)**: `msbuild MySolution.sln /p:Configuration=Debug /p:Platform=x64` from solution root
 
 If it fails, call the `code-testing-fixer`, rebuild, retry up to 3 times.
 

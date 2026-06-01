@@ -39,17 +39,27 @@ Common error types:
 - TypeScript: TS2304 "Cannot find name 'X'"
 - Python: NameError, ModuleNotFoundError
 - Go: "undefined: X"
+- C++: "fatal error: ... No such file or directory", "use of undeclared identifier"
 
 **Type mismatches:**
 
 - C#: CS0029 "Cannot implicitly convert type"
 - TypeScript: TS2322 "Type 'X' is not assignable to type 'Y'"
 - Python: TypeError
+- C++: "cannot convert 'X' to 'Y'", "no viable conversion"
 
 **Missing members:**
 
 - C#: CS1061 "does not contain a definition for"
 - TypeScript: TS2339 "Property does not exist"
+- C++: "has no member named 'X'", "no member named 'X' in 'Y'"
+
+**Linker errors (C++ specific):**
+
+- "undefined reference to 'X'" → missing source file in `add_executable` or missing `target_link_libraries`
+- "multiple definition of 'X'" → function defined in header without `inline`
+- "LNK2019: unresolved external symbol" (MSVC) → missing source file in vcxproj, missing project reference, or missing `.lib` in Linker > Input > Additional Dependencies
+- "LNK1120: N unresolved externals" (MSVC) → downstream of LNK2019; fix the individual LNK2019 errors first
 
 ### 4. Apply Fix
 

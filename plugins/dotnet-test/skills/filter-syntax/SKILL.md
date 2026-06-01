@@ -1,6 +1,6 @@
 ---
 name: filter-syntax
-description: "Reference data for test filter syntax across all platform and framework combinations: VSTest --filter expressions, MTP filters for MSTest/NUnit/xUnit v3/TUnit, and VSTest-to-MTP filter translation. DO NOT USE directly — loaded by run-tests, mtp-hot-reload, and migrate-vstest-to-mtp when they need filter syntax."
+description: "Reference data for test filter syntax across all platform and framework combinations: VSTest --filter expressions, MTP filters for MSTest/NUnit/xUnit v3/TUnit, GoogleTest adapter filters via vstest, Microsoft Native Test Framework filters, and VSTest-to-MTP filter translation. DO NOT USE directly — loaded by run-tests, run-cpp-tests, mtp-hot-reload, and migrate-vstest-to-mtp when they need filter syntax."
 user-invocable: false
 license: MIT
 ---
@@ -171,3 +171,99 @@ dotnet run --treenode-filter "/*/MyProject.Tests.Integration/*/*/*[Priority=Crit
 | `Name=MethodName` | `--filter-method *MethodName*` | Wildcards for substring match |
 | `Category=Value` (trait) | `--filter-trait "Category=Value"` | Filter by trait name/value pair |
 | Complex expressions | `--filter-query "expr"` | Uses xUnit.net query filter language (see above) |
+
+## VSTest filters — GoogleTest (via Google Test Adapter)
+
+When running C++ GoogleTest tests through `vstest.console.exe` or `dotnet test` (via the Google Test Adapter included with "Desktop development with C++" workload), tests are exposed as vstest test cases using standard `TestCaseFilter` syntax.
+
+### Test name mapping
+
+GoogleTest names map to vstest properties as follows:
+
+| GoogleTest concept | vstest property | Example value |
+|---|---|---|
+| `TestSuiteName.TestName` | `FullyQualifiedName` | `CalculatorTest.AddsPositiveNumbers` |
+| `TestName` | `Name` | `AddsPositiveNumbers` |
+| `TestSuiteName` | `ClassName` | `CalculatorTest` |
+| Parameterized: `Prefix/Suite.Test/N` | `FullyQualifiedName` | `MyInstantiation/ParamTest.Works/0` |
+| `TEST_F` fixture | `ClassName` | `CalculatorFixture` |
+
+### Filter syntax
+
+```bash
+# Run all tests in a suite
+vstest.console.exe MyTests.dll /TestCaseFilter:"ClassName=CalculatorTest"
+
+# Run a specific test
+vstest.console.exe MyTests.dll /TestCaseFilter:"FullyQualifiedName=CalculatorTest.AddsPositiveNumbers"
+
+# Substring match (any test containing "Add")
+vstest.console.exe MyTests.dll /TestCaseFilter:"Name~Add"
+
+# Exclude a suite
+vstest.console.exe MyTests.dll /TestCaseFilter:"ClassName!=SlowTests"
+
+# Combine: suite AND name pattern
+vstest.console.exe MyTests.dll /TestCaseFilter:"ClassName=CalculatorTest&Name~Negative"
+
+# Via dotnet test (solution containing vcxproj with GoogleTest)
+dotnet test MySolution.sln --filter "ClassName=CalculatorTest"
+dotnet test MySolution.sln --filter "Name~Boundary"
+```
+
+### Supported filter properties
+
+| Property | Description | Operators |
+|----------|-------------|----------|
+| `FullyQualifiedName` | `SuiteName.TestName` (or `Prefix/Suite.Test/Param`) | `=`, `!=`, `~`, `!~` |
+| `Name` | Test name only (without suite) | `=`, `!=`, `~`, `!~` |
+| `ClassName` | Suite/fixture name | `=`, `!=`, `~`, `!~` |
+| `TestCategory` | Mapped from `TYPED_TEST`, `TEST_P` instantiation name, or custom traits (adapter-dependent) | `=`, `!=` |
+
+### GoogleTest adapter configuration
+
+The adapter can be configured via Tools → Options → Test Adapter for Google Test, or via a `.runsettings` file:
+
+```xml
+<RunSettings>
+  <GoogleTestAdapterSettings>
+    <SolutionSettings>
+      <Settings>
+        <TestDiscoveryRegex>.*[Tt]est.*\.exe</TestDiscoveryRegex>
+        <WorkingDir>$(SolutionDir)</WorkingDir>
+        <AdditionalTestExecutionParams>--gtest_shuffle</AdditionalTestExecutionParams>
+      </Settings>
+    </SolutionSettings>
+  </GoogleTestAdapterSettings>
+</RunSettings>
+```
+
+Use with: `vstest.console.exe MyTests.dll /Settings:my.runsettings /TestCaseFilter:"Name~Integration"`
+
+### Microsoft Native Test Framework filters (vstest)
+
+Microsoft Native Test Framework tests (CppUnitTest.h) also use vstest `TestCaseFilter` syntax:
+
+```bash
+# By method name
+vstest.console.exe NativeTests.dll /TestCaseFilter:"Name~Calculator"
+
+# By class (TEST_CLASS name)
+vstest.console.exe NativeTests.dll /TestCaseFilter:"ClassName=CalculatorTests"
+
+# By trait (from BEGIN_TEST_METHOD_ATTRIBUTE)
+vstest.console.exe NativeTests.dll /TestCaseFilter:"Priority=1"
+vstest.console.exe NativeTests.dll /TestCaseFilter:"Owner=TeamA"
+
+# Combine
+vstest.console.exe NativeTests.dll /TestCaseFilter:"ClassName=CalculatorTests&Priority=1"
+```
+
+**Trait properties for MS Native tests:**
+
+| Trait macro | Filter property |
+|-------------|----------------|
+| `TEST_OWNER(L"name")` | `Owner` |
+| `TEST_PRIORITY(n)` | `Priority` |
+| `TEST_METHOD_ATTRIBUTE(L"Category", L"value")` | `Category` |
+| `TEST_METHOD_ATTRIBUTE(L"key", L"value")` | `key` |

@@ -32,6 +32,8 @@ If not provided, check in order:
    - `pyproject.toml` / `setup.py` → `python -m py_compile` or skip
    - `go.mod` → `go build ./...`
    - `Cargo.toml` → `cargo build`
+   - `CMakeLists.txt` → `cmake --build build -j` (configure first with `cmake -S . -B build` if `build/` doesn't exist)
+   - `*.vcxproj` / `*.sln` (C++) → `msbuild MySolution.sln /p:Configuration=Debug /p:Platform=x64` or `dotnet build`
    - `Makefile` → `make` or `make build`
 
 ### 2. Run Build Command
@@ -42,6 +44,8 @@ For scoped builds (if specific files are mentioned):
 - **TypeScript**: `npx tsc --noEmit`
 - **Go**: `go build ./...`
 - **Rust**: `cargo build`
+- **C++ (CMake)**: `cmake --build build --target my_tests -j`
+- **C++ (MSBuild)**: `msbuild MyTests.vcxproj /p:Configuration=Debug /p:Platform=x64`
 
 ### 3. Parse Output
 
@@ -76,3 +80,5 @@ Errors:
 | Go | `go build ./...` |
 | Rust | `cargo build` |
 | Java | `mvn compile` or `gradle build` |
+| C++ (CMake) | `cmake --build build -j` |
+| C++ (MSBuild) | `msbuild MySolution.sln /p:Configuration=Debug /p:Platform=x64` |

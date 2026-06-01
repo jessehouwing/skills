@@ -30,6 +30,7 @@ If not provided, check in order:
    - `pyproject.toml` → `black .` or `ruff format`
    - `go.mod` → `go fmt ./...`
    - `Cargo.toml` → `cargo fmt`
+   - `.clang-format` → `clang-format -i path/to/file.cpp`
    - `.prettierrc` → `npx prettier --write .`
 
 ### 2. Run Lint Command
@@ -40,6 +41,7 @@ For scoped linting (if specific files are mentioned):
 - **TypeScript**: `npx prettier --write path/to/file.ts`
 - **Python**: `black path/to/file.py`
 - **Go**: `go fmt path/to/file.go`
+- **C++**: `clang-format -i path/to/file.cpp`
 
 Use the **fix** version of commands, not just verification.
 

@@ -6,9 +6,9 @@ description: >-
   write unit tests, add tests, improve test coverage, create test
   project, achieve high coverage, comprehensive tests, or asked to
   scaffold a new test project for an app, service, or library. Supports
-  C#, TypeScript, JavaScript, Python, Go, Rust, Java, and more. Orchestrates
-  the code-testing-generator sub-agent through research, planning, and
-  implementation phases so tests compile, pass, and follow project
+  C#, TypeScript, JavaScript, Python, Go, Rust, Java, C++ (GoogleTest/GoogleMock),
+  and more. Orchestrates the code-testing-generator sub-agent through research,
+  planning, and implementation phases so tests compile, pass, and follow project
   conventions. DO NOT USE FOR: running existing tests or test filters
   (use run-tests); diagnosing coverage plateaus or project-wide
   coverage/CRAP analysis without writing tests (use coverage-analysis);

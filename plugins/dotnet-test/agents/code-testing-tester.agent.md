@@ -32,6 +32,8 @@ If not provided, check in order:
    - `pyproject.toml` / `pytest.ini` → `pytest`
    - `go.mod` → `go test ./...`
    - `Cargo.toml` → `cargo test`
+   - `CMakeLists.txt` with `gtest_discover_tests` → `ctest --test-dir build --output-on-failure`
+   - `*.vcxproj` (C++ test project) → `vstest.console.exe x64\Debug\MyTests.dll` or `dotnet test`
    - `Makefile` → `make test`
 
 ### 2. Run Test Command
@@ -42,6 +44,9 @@ For scoped tests (if specific files are mentioned):
 - **TypeScript/Jest**: `npm test -- --testPathPattern=FileName`
 - **Python/pytest**: `pytest path/to/test_file.py`
 - **Go**: `go test ./path/to/package`
+- **C++ (CTest)**: `ctest --test-dir build -R "SuiteName" --output-on-failure`
+- **C++ (direct)**: `./build/my_tests --gtest_filter=SuiteName.TestName`
+- **C++ (vstest)**: `vstest.console.exe MyTests.dll /TestCaseFilter:"Name~SuiteName"`
 
 ### 3. Parse Output
 

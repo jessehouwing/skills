@@ -2,16 +2,16 @@
 name: coverage-analysis
 description: >
   Project-wide code coverage and CRAP (Change Risk Anti-Patterns) score
-  analysis for .NET projects. Calculates CRAP scores per method and surfaces
-  risk hotspots — complex code with low coverage that is dangerous to modify.
-  Use to diagnose why coverage is stuck or plateaued, identify what methods
-  block improvement, or get project-wide coverage analysis with risk ranking.
+  analysis for .NET and C++ projects. Calculates CRAP scores per method and
+  surfaces risk hotspots — complex code with low coverage that is dangerous
+  to modify. Supports .NET (Coverlet/MS CodeCoverage), C++ via
+  OpenCppCoverage, gcov/lcov, llvm-cov, or VS Enterprise .coverage conversion.
   USE FOR: coverage stuck, coverage plateau, can't increase coverage, what's
   blocking coverage, coverage gap, CRAP scores, risk hotspots, where to add
-  tests, coverage analysis, coverage report.
+  tests, coverage analysis, coverage report, C++ coverage, native coverage.
   DO NOT USE FOR: targeted single-method CRAP analysis (use crap-score),
   writing tests, running tests without coverage, or troubleshooting test
-  execution (use run-tests).
+  execution (use run-tests or run-cpp-tests).
 license: MIT
 ---
 
@@ -522,11 +522,121 @@ After Phase 5 completes successfully, you may follow up with a short message poi
 - Spot-check one method's CRAP score: `comp² × (1 − cov)³ + comp` — a method with 100% coverage should have CRAP = complexity
 - If Phase 5 ran, verify `TestResults/coverage-analysis/reports/index.html` exists; otherwise the report file should mark HTML/Text/CSV rows as `Not generated`
 
+## C++ Coverage Analysis
+
+This skill can also analyze C++ test coverage when provided with Cobertura XML. The CRAP score formula and Phase 3/4 analysis are language-agnostic — they work on any Cobertura XML regardless of how it was generated.
+
+### Generating Cobertura XML from C++ Projects
+
+C++ projects don't use `dotnet test` coverage collection. Instead, use one of these tools to produce Cobertura XML, then feed it to Phase 3:
+
+#### Option 1: Visual Studio Enterprise Code Coverage (vstest)
+
+When running C++ tests via `vstest.console.exe`, Visual Studio Enterprise can collect coverage:
+
+```powershell
+# Collect coverage (produces .coverage binary format by default)
+vstest.console.exe x64\Debug\MyTests.dll /EnableCodeCoverage
+
+# The .coverage file is NOT Cobertura XML — it's a VS binary format.
+# Convert using CodeCoverage.exe (ships with VS Enterprise):
+& "$env:VSINSTALLDIR\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" `
+    analyze /output:coverage.cobertura.xml `
+    TestResults\*.coverage
+```
+
+**Important:** VS Code Coverage for C++ requires Visual Studio Enterprise. The `.coverage` binary format is produced by default — it must be converted to Cobertura XML before this skill can analyze it.
+
+#### Option 2: OpenCppCoverage (Windows, open-source)
+
+OpenCppCoverage instruments native binaries and produces Cobertura XML directly:
+
+```powershell
+# Install via chocolatey or download from https://github.com/OpenCppCoverage/OpenCppCoverage
+choco install opencppcoverage -y
+
+# Run test binary with coverage
+OpenCppCoverage.exe `
+    --sources "src\*" `
+    --excluded_sources "test\*" `
+    --export_type cobertura:coverage.cobertura.xml `
+    -- x64\Debug\MyTests.exe
+```
+
+This is the recommended approach for Windows/MSVC projects — no VS Enterprise license needed, and it produces Cobertura XML directly.
+
+#### Option 3: gcov + lcov (GCC/Clang, CMake)
+
+```bash
+# Build with coverage flags
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_CXX_FLAGS="--coverage" -DCMAKE_C_FLAGS="--coverage"
+cmake --build build
+
+# Run tests
+ctest --test-dir build --output-on-failure
+
+# Collect coverage with lcov
+lcov --capture --directory build --output-file coverage.info \
+    --ignore-errors mismatch
+lcov --remove coverage.info '/usr/*' '*/test/*' '*/googletest/*' \
+    --output-file coverage_filtered.info
+
+# Convert to Cobertura XML
+pip install lcov_cobertura
+lcov_cobertura coverage_filtered.info -o coverage.cobertura.xml
+```
+
+#### Option 4: llvm-cov (Clang)
+
+```bash
+# Build with profiling
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_CXX_FLAGS="-fprofile-instr-generate -fcoverage-mapping"
+cmake --build build
+
+# Run tests (generates default.profraw)
+LLVM_PROFILE_FILE="build/tests.profraw" ./build/my_tests
+
+# Merge and export
+llvm-profdata merge -sparse build/tests.profraw -o build/tests.profdata
+llvm-cov export ./build/my_tests \
+    -instr-profile=build/tests.profdata \
+    -format=lcov > coverage.lcov
+
+# Convert LCOV to Cobertura
+pip install lcov_cobertura
+lcov_cobertura coverage.lcov -o coverage.cobertura.xml
+```
+
+### Using with This Skill
+
+Once you have `coverage.cobertura.xml`, pass it to this skill's Phase 3 directly:
+
+```
+Analyze coverage from: path/to/coverage.cobertura.xml
+```
+
+The skill will skip Phase 2 (no `dotnet test`) and proceed directly with CRAP score computation and risk hotspot analysis.
+
+### C++ Coverage Caveats
+
+| Issue | Notes |
+|-------|-------|
+| VS `.coverage` format | Binary format, NOT Cobertura. Must convert with `CodeCoverage.exe analyze` |
+| Template-heavy code | Template instantiations may inflate method counts in Cobertura output |
+| Header-only libraries | Coverage tools may report coverage for headers included from test files — filter with `--sources` / `--excluded_sources` |
+| Inline functions | `gcov` may miss inline functions not emitted — use `-fno-inline` for more accurate coverage |
+| GoogleTest internals | Filter out `testing::*` and `googletest/*` paths from coverage reports |
+| Complexity metric | Cobertura XML from C++ tools may not include cyclomatic complexity — CRAP scores will use branch coverage as a proxy when complexity is missing |
+
 ## Common Pitfalls
 
 - **No Cobertura XML generated** — the test project may lack a coverage provider. The skill auto-adds one, but if `dotnet add package` fails (offline/proxy), coverage collection silently produces nothing. Check for `.coverage` binary files as a fallback indicator.
 - **Test failures (exit code 1)** — coverage is still collected from passing tests. Do not abort; proceed with partial data and note the failures in the summary.
 - **Premature end before user-facing summary** — never start Phase 5 (ReportGenerator install/run) before the Phase 4 assistant response is delivered. The heavy `dotnet tool install` can crash the session or exhaust budget, leaving the user with no analysis even though the CRAP scores were already computed.
 - **ReportGenerator install failure** — if `dotnet tool install` fails (no internet) during Phase 5, leave the existing Phase 4 summary as the final output and note that HTML reports were skipped. Do not retry or block on the install.
+- **C++ .coverage files mistaken for Cobertura** — VS Enterprise produces `.coverage` binary files by default. If you find `.coverage` files in a C++ project, they need conversion via `CodeCoverage.exe analyze` before this skill can process them.
+- **Missing complexity in C++ Cobertura** — OpenCppCoverage and gcov-based tools may not emit `complexity` attributes. The CRAP score formula degrades gracefully: when complexity is missing, use branch coverage density as a rough proxy, or flag the method as "complexity unknown".
 - **Method name mismatches in Cobertura** — async methods, lambdas, and local functions may have compiler-generated names. The scripts use the Cobertura method name/signature directly; verify against source if results look unexpected.
 - **Mixed coverage providers** — when a solution contains both Coverlet and Microsoft CodeCoverage projects, the skill runs per-project to avoid dual-provider conflicts. This is slower but correct.

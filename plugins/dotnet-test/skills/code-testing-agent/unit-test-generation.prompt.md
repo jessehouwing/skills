@@ -159,6 +159,37 @@ class TestCalculator:
             sut.divide(10, 0)
 ```
 
+### C++ (GoogleTest / GoogleMock)
+
+```cpp
+#include <gtest/gtest.h>
+#include "calculator.h"
+
+struct AddTestCase {
+    int a;
+    int b;
+    int expected;
+};
+
+class AddTest : public ::testing::TestWithParam<AddTestCase> {};
+
+TEST_P(AddTest, ReturnsCorrectSum) {
+    auto [a, b, expected] = GetParam();
+    EXPECT_EQ(Calculator{}.Add(a, b), expected);
+}
+
+INSTANTIATE_TEST_SUITE_P(Calculator, AddTest, ::testing::Values(
+    AddTestCase{2, 3, 5},
+    AddTestCase{-1, 1, 0},
+    AddTestCase{0, 0, 0}
+));
+
+TEST(CalculatorTest, DivideByZeroThrows) {
+    Calculator calc;
+    EXPECT_THROW(calc.Divide(10, 0), std::invalid_argument);
+}
+```
+
 ## Output Requirements
 
 - Tests must be **complete and buildable** with no placeholder code
