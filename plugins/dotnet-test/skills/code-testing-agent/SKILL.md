@@ -6,15 +6,16 @@ description: >-
   write unit tests, add tests, improve test coverage, create test
   project, achieve high coverage, comprehensive tests, or asked to
   scaffold a new test project for an app, service, or library. Supports
-  C#, TypeScript, JavaScript, Python, Go, Rust, Java, C++ (GoogleTest/GoogleMock),
-  and more. Orchestrates the code-testing-generator sub-agent through research,
+  C#, TypeScript, JavaScript, Python, Go, Rust, Java, C++ (GoogleTest/GoogleMock,
+  Boost.Test, Microsoft Native Test Framework), and more. Orchestrates the code-testing-generator sub-agent through research,
   planning, and implementation phases so tests compile, pass, and follow project
   conventions. DO NOT USE FOR: running existing tests or test filters
-  (use run-tests); diagnosing coverage plateaus or project-wide
+  (use run-tests or run-cpp-tests); diagnosing coverage plateaus or project-wide
   coverage/CRAP analysis without writing tests (use coverage-analysis);
   targeted method/class CRAP scores (use crap-score); MSTest assertion
   guidance, MSTest test pattern modernization, or fixing existing MSTest test
-  code (use writing-mstest-tests).
+  code (use writing-mstest-tests); C++ test pattern guidance for
+  GoogleTest/Boost.Test/MS Native (use writing-cpp-tests).
 license: MIT
 ---
 
@@ -34,9 +35,10 @@ Use this skill when you need to:
 
 ## When Not to Use
 
-- Running or executing existing tests (use the `run-tests` skill)
+- Running or executing existing tests (use the `run-tests` or `run-cpp-tests` skill)
 - Migrating between test frameworks (use migration skills)
 - Writing tests specifically for MSTest patterns (use `writing-mstest-tests`)
+- Writing or fixing C++ tests for specific GoogleTest/Boost.Test/MS Native patterns (use `writing-cpp-tests`)
 - Debugging failing test logic
 
 ## How It Works

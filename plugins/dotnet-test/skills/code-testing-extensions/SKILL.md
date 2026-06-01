@@ -21,7 +21,7 @@ This skill provides access to language-specific guidance files used by the code-
 | [extensions/python.md](extensions/python.md) | Python | Framework-adaptive test commands (pytest, custom runners), project layout detection, mocking guidelines, common errors |
 | [extensions/typescript.md](extensions/typescript.md) | TypeScript/JavaScript | Build/test commands (Jest/Vitest/Mocha), framework detection, mocking, TS-specific considerations |
 | [extensions/powershell.md](extensions/powershell.md) | PowerShell | Test commands (Pester v5), module import patterns, discovery/run pitfalls, mocking, common errors |
-| [extensions/cpp.md](extensions/cpp.md) | C++ | GoogleTest/GoogleMock framework, CMake/CTest and MSBuild/vcxproj build and test commands, Microsoft Native Test Framework, fixture patterns, parameterized tests, mocking (MOCK_METHOD, matchers, actions), assertions, coverage (gcov/llvm-cov), sanitizers, common errors |
+| [extensions/cpp.md](extensions/cpp.md) | C++ | GoogleTest/GoogleMock, Boost.Test, and Microsoft Native Test Framework; CMake/CTest and MSBuild/vcxproj build and test commands, fixture patterns, parameterized tests, mocking (MOCK_METHOD, matchers, actions), assertions, coverage (gcov/llvm-cov/OpenCppCoverage), sanitizers, common errors |
 | [extensions/go.md](extensions/go.md) | Go | `go test` commands, table-driven tests, integration vs unit layout, mocking via interfaces, common errors |
 | [extensions/java.md](extensions/java.md) | Java | Maven/Gradle commands, JUnit 4/5 and TestNG detection, Mockito, Spring Boot slices, common errors |
 | [extensions/rust.md](extensions/rust.md) | Rust | `cargo test` commands, unit vs integration vs doc tests, features, async test harnesses, common errors |

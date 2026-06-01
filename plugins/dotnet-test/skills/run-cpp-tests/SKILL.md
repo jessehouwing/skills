@@ -2,10 +2,11 @@
 name: run-cpp-tests
 description: >
   For C++ test projects: detects the build system (CMake/CTest, MSBuild/vcxproj,
-  Bazel) and test framework (GoogleTest, Microsoft Native Test Framework), then
-  picks the matching build and test commands. USE FOR: running C++ tests, filtering
-  GoogleTest tests with --gtest_filter, running CTest with -R filters, running
-  vstest.console.exe for native test DLLs, choosing the right command for the
+  Bazel) and test framework (GoogleTest, Boost.Test, Microsoft Native Test
+  Framework), then picks the matching build and test commands. USE FOR: running
+  C++ tests, filtering GoogleTest tests with --gtest_filter, filtering Boost.Test
+  with --run_test, running CTest with -R filters, running vstest.console.exe for
+  native test DLLs or Boost.Test EXEs, choosing the right command for the
   detected toolchain, troubleshooting test discovery failures, running a subset
   of tests by suite or name pattern.
   DO NOT USE FOR: writing/generating test code (use the code-testing pipeline
@@ -62,16 +63,19 @@ Detect the build system and test framework, build test binaries, and run tests w
 | `CMakeLists.txt` with `FetchContent_Declare(googletest ...)` | CMake + GoogleTest | CTest or direct binary |
 | `*.vcxproj` with GoogleTest NuGet or adapter | MSBuild | vstest.console.exe or direct binary |
 | `*.vcxproj` with `CppUnitTestFramework` | MSBuild | vstest.console.exe |
+| `*.vcxproj` or `vcpkg.json` with `boost-test` | MSBuild + Boost.Test | vstest.console.exe or direct binary |
 | `BUILD.bazel` with `@googletest` | Bazel | `bazel test` |
 | `Makefile` with gtest link flags | Make | Direct binary |
 
 **Framework detection in source files:**
 
 | Include | Framework |
-|---------|-----------|
+|---------|----------|
 | `#include <gtest/gtest.h>` | GoogleTest |
 | `#include <gmock/gmock.h>` | GoogleTest + GoogleMock |
 | `#include "CppUnitTest.h"` | Microsoft Native Test Framework |
+| `#include <boost/test/unit_test.hpp>` | Boost.Test (standalone library) |
+| `#include <boost/test/included/unit_test.hpp>` | Boost.Test (single-header) |
 
 ### Step 2: Build the test binary
 

@@ -1,13 +1,13 @@
 # dotnet-test
 
-Skills and agents for running, generating, analyzing, migrating, and improving .NET tests across all major frameworks (MSTest, xUnit, NUnit, TUnit) and platforms (VSTest, Microsoft.Testing.Platform).
+Skills and agents for running, generating, analyzing, migrating, and improving .NET and C++ tests. Supports .NET frameworks (MSTest, xUnit, NUnit, TUnit), C++ frameworks (GoogleTest/GoogleMock, Boost.Test, Microsoft Native Test Framework), and platforms (VSTest, Microsoft.Testing.Platform, CTest).
 
 ## When to use this plugin
 
-- **Run tests** — execute `dotnet test` with automatic platform/framework detection and filter syntax
+- **Run tests** — execute `dotnet test` with automatic platform/framework detection and filter syntax, or run C++ tests via CTest/vstest/direct binary
 - **Generate tests** — scaffold comprehensive unit tests for any language via a multi-agent pipeline
 - **Migrate tests** — upgrade MSTest v1/v2 → v3 → v4, xUnit v2 → v3, or VSTest → Microsoft.Testing.Platform
-- **Audit test quality** — detect anti-patterns, test smells, assertion gaps, and coverage risks
+- **Audit test quality** — detect anti-patterns, test smells, assertion gaps, and coverage risks (both .NET and C++)
 - **Improve testability** — find static dependencies, generate wrappers, and migrate call sites to injectable abstractions
 - **Measure coverage** — collect code coverage, compute CRAP scores, and surface risk hotspots
 
@@ -18,6 +18,7 @@ Skills and agents for running, generating, analyzing, migrating, and improving .
 | Skill | Description |
 |---|---|
 | **run-tests** | Run .NET tests via `dotnet test` with platform/framework auto-detection and filter support |
+| **run-cpp-tests** | Run C++ tests via CTest, vstest.console.exe, or direct binary with framework auto-detection |
 | **mtp-hot-reload** | Rapid test-fix iteration using MTP hot reload (edit code → re-run without rebuilding) |
 
 ### Test generation
@@ -26,6 +27,7 @@ Skills and agents for running, generating, analyzing, migrating, and improving .
 |---|---|
 | **code-testing-agent** | Multi-agent pipeline (Research → Plan → Implement → Build → Test → Fix → Lint) that generates tests for any language |
 | **writing-mstest-tests** | Best practices and modern APIs for writing MSTest 3.x/4.x tests |
+| **writing-cpp-tests** | Best practices for writing C++ tests with GoogleTest/GoogleMock, Boost.Test, and Microsoft Native Test Framework |
 
 ### Test migration
 
@@ -40,9 +42,11 @@ Skills and agents for running, generating, analyzing, migrating, and improving .
 
 | Skill | Description |
 |---|---|
-| **test-anti-patterns** | Quick pragmatic scan for ~15 common test quality issues with severity ranking |
+| **test-anti-patterns** | Quick pragmatic scan for ~15 common .NET test quality issues with severity ranking |
+| **cpp-test-anti-patterns** | Severity-ranked audit of C++ test anti-patterns (GoogleTest, Boost.Test, MS Native) |
 | **test-smell-detection** | Deep formal audit using academic test smell taxonomy (19 smell types) |
-| **assertion-quality** | Measure assertion variety and depth — find shallow tests that barely verify anything |
+| **assertion-quality** | Measure .NET assertion variety and depth — find shallow tests that barely verify anything |
+| **cpp-assertion-quality** | Measure C++ assertion diversity across GoogleTest, Boost.Test, and MS Native |
 | **test-gap-analysis** | Pseudo-mutation analysis to find test blind spots that coverage numbers miss |
 | **test-tagging** | Tag tests with standardized traits (smoke, regression, boundary, critical-path, etc.) |
 
@@ -99,5 +103,6 @@ These are pipeline stages invoked automatically by the agents above (`user-invoc
 
 ## Prerequisites
 
-- .NET SDK installed (`dotnet` on PATH)
-- A project with an existing test framework (MSTest, xUnit, NUnit, or TUnit) for execution and analysis skills
+- .NET SDK installed (`dotnet` on PATH) for .NET test skills
+- A project with an existing test framework (MSTest, xUnit, NUnit, or TUnit) for .NET execution and analysis skills
+- For C++ skills: CMake/CTest, MSBuild, or Bazel build system; GoogleTest, Boost.Test, or Microsoft Native Test Framework

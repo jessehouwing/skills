@@ -40,7 +40,7 @@ Based on files found:
 - **Python**: `pyproject.toml` or `pytest.ini` → check for pytest/unittest
 - **Go**: `go.mod` → tests use `*_test.go` pattern
 - **Rust**: `Cargo.toml` → tests go in same file or `tests/` directory
-- **C++**: `CMakeLists.txt` → check for GoogleTest (`FetchContent_Declare(googletest ...)`, `find_package(GTest)`, `gtest_discover_tests`); also check `*.vcxproj` for gtest NuGet packages or `Microsoft.VisualStudio.TestTools.CppUnitTestFramework` (MS Native Test Framework); check `vcpkg.json` or `conanfile.txt` for gtest dependency
+- **C++**: `CMakeLists.txt` → check for GoogleTest (`FetchContent_Declare(googletest ...)`, `find_package(GTest)`, `gtest_discover_tests`); also check `*.vcxproj` for gtest NuGet packages, `Microsoft.VisualStudio.TestTools.CppUnitTestFramework` (MS Native Test Framework), or `boost-test` in `vcpkg.json` (Boost.Test); check `vcpkg.json` or `conanfile.txt` for gtest/boost-test dependencies
 
 ### 3. Identify the Scope of Testing
 

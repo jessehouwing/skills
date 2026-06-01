@@ -34,6 +34,7 @@ If not provided, check in order:
    - `Cargo.toml` → `cargo test`
    - `CMakeLists.txt` with `gtest_discover_tests` → `ctest --test-dir build --output-on-failure`
    - `*.vcxproj` (C++ test project) → `vstest.console.exe x64\Debug\MyTests.dll` or `dotnet test`
+   - Boost.Test EXE → `x64\Debug\MyBoostTests.exe --log_level=test_suite` or `vstest.console.exe x64\Debug\MyBoostTests.exe`
    - `Makefile` → `make test`
 
 ### 2. Run Test Command
@@ -45,7 +46,8 @@ For scoped tests (if specific files are mentioned):
 - **Python/pytest**: `pytest path/to/test_file.py`
 - **Go**: `go test ./path/to/package`
 - **C++ (CTest)**: `ctest --test-dir build -R "SuiteName" --output-on-failure`
-- **C++ (direct)**: `./build/my_tests --gtest_filter=SuiteName.TestName`
+- **C++ (gtest direct)**: `./build/my_tests --gtest_filter=SuiteName.TestName`
+- **C++ (Boost.Test direct)**: `./build/my_boost_tests --run_test=SuiteName/TestName`
 - **C++ (vstest)**: `vstest.console.exe MyTests.dll /TestCaseFilter:"Name~SuiteName"`
 
 ### 3. Parse Output

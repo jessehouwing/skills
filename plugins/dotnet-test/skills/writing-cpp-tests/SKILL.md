@@ -2,12 +2,14 @@
 name: writing-cpp-tests
 description: >
   Write new C++ unit tests and implement concrete fixes in existing C++ test code using
-  GoogleTest (gtest), GoogleMock (gmock), and Microsoft Native Test Framework (CppUnitTest)
-  with modern best practices.
+  GoogleTest (gtest), GoogleMock (gmock), Boost.Test, and Microsoft Native Test Framework
+  (CppUnitTest) with modern best practices.
   USE FOR: write C++ unit tests, write gtest tests, create test fixture, write gmock mock,
   fix gtest assertions, EXPECT_EQ vs ASSERT_EQ, parameterized tests, TEST_P, MOCK_METHOD,
   mock class, matchers, actions, expectations, InSequence, NiceMock, StrictMock,
   write CppUnitTest tests, TEST_CLASS, TEST_METHOD, death tests, typed tests,
+  write Boost.Test tests, BOOST_AUTO_TEST_CASE, BOOST_CHECK, BOOST_FIXTURE_TEST_CASE,
+  BOOST_DATA_TEST_CASE, BOOST_TEST_MODULE,
   something seems off with my C++ tests, review C++ tests and fix issues.
   DO NOT USE FOR: broad test quality audits (use cpp-test-anti-patterns),
   assertion diversity analysis (use cpp-assertion-quality),
@@ -18,17 +20,18 @@ license: MIT
 
 # Writing C++ Tests
 
-Help users write effective C++ unit tests with GoogleTest/GoogleMock or Microsoft Native Test Framework using current APIs and best practices.
+Help users write effective C++ unit tests with GoogleTest/GoogleMock, Boost.Test, or Microsoft Native Test Framework using current APIs and best practices.
 
 ## When to Use
 
-- User wants to write new C++ unit tests (gtest, gmock, or MS Native)
+- User wants to write new C++ unit tests (gtest, gmock, Boost.Test, or MS Native)
 - User wants to improve or modernize existing C++ tests
 - User asks about gtest assertions, fixtures, parameterized tests, or mocking patterns
 - User needs help writing a mock class with `MOCK_METHOD`
 - User asks about matchers, actions, or expectation ordering in gmock
 - User needs help fixing a specific gtest/gmock compilation or runtime error
 - User wants to write Microsoft Native Test Framework tests (CppUnitTest.h)
+- User wants to write Boost.Test tests (BOOST_AUTO_TEST_CASE, fixtures, data-driven)
 
 ## When Not to Use
 
@@ -502,6 +505,128 @@ target_compile_definitions(my_tests PRIVATE UNIT_TESTING)
 - Don't leak mock objects — ensure mocks are destroyed before test ends (use local scope)
 - Don't write your own `main()` unless you need custom global setup (e.g., `::testing::AddGlobalTestEnvironment`)
 
+## Boost.Test (via VS Test Adapter)
+
+Boost.Test is supported in Visual Studio via the Boost.Test Adapter (included with "Desktop development with C++" workload). Tests are discoverable in Test Explorer and runnable via `vstest.console.exe`.
+
+### Installation
+
+```bash
+# Dynamic library
+vcpkg install boost-test
+
+# Static library
+vcpkg install boost-test:x86-windows-static
+
+# Integrate with VS
+vcpkg integrate install
+```
+
+### Basic test structure
+
+```cpp
+#define BOOST_TEST_MODULE MyTestModule
+#include <boost/test/included/unit_test.hpp>  // single-header variant
+#include "calculator.h"
+
+BOOST_AUTO_TEST_SUITE(CalculatorTests)
+
+BOOST_AUTO_TEST_CASE(Add_TwoPositiveNumbers_ReturnsSum) {
+    Calculator calc;
+    BOOST_CHECK_EQUAL(calc.Add(2, 3), 5);
+}
+
+BOOST_AUTO_TEST_CASE(Divide_ByZero_Throws) {
+    Calculator calc;
+    BOOST_CHECK_THROW(calc.Divide(10, 0), std::invalid_argument);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+```
+
+**Include options:**
+- `#include <boost/test/included/unit_test.hpp>` — single-header (simplest, no separate compilation)
+- `#include <boost/test/unit_test.hpp>` — standalone library (link against `boost_unit_test_framework`)
+
+### Fixtures
+
+```cpp
+struct DatabaseFixture {
+    DatabaseFixture() : db(":memory:") { db.Seed(); }   // setup
+    ~DatabaseFixture() { db.Reset(); }                   // teardown
+    Database db;
+};
+
+BOOST_FIXTURE_TEST_CASE(Find_ExistingUser_ReturnsUser, DatabaseFixture) {
+    auto user = db.Find("alice");
+    BOOST_REQUIRE(user.has_value());
+    BOOST_CHECK_EQUAL(user->name, "alice");
+}
+```
+
+### Data-driven tests
+
+```cpp
+#include <boost/test/data/test_case.hpp>
+#include <boost/test/data/monomorphic.hpp>
+
+namespace bdata = boost::unit_test::data;
+
+BOOST_DATA_TEST_CASE(Add_MultipleInputs, 
+    bdata::make({1, -1, 0}) ^ bdata::make({2, 1, 0}) ^ bdata::make({3, 0, 0}),
+    a, b, expected) {
+    BOOST_CHECK_EQUAL(Calculator{}.Add(a, b), expected);
+}
+```
+
+### Assertion reference
+
+| Level | Check (non-fatal) | Require (fatal) | Description |
+|-------|-------------------|-----------------|-------------|
+| Boolean | `BOOST_CHECK(expr)` | `BOOST_REQUIRE(expr)` | Expression is true |
+| Equality | `BOOST_CHECK_EQUAL(a, b)` | `BOOST_REQUIRE_EQUAL(a, b)` | `a == b` |
+| Inequality | `BOOST_CHECK_NE(a, b)` | `BOOST_REQUIRE_NE(a, b)` | `a != b` |
+| Less than | `BOOST_CHECK_LT(a, b)` | `BOOST_REQUIRE_LT(a, b)` | `a < b` |
+| Less/equal | `BOOST_CHECK_LE(a, b)` | `BOOST_REQUIRE_LE(a, b)` | `a <= b` |
+| Greater than | `BOOST_CHECK_GT(a, b)` | `BOOST_REQUIRE_GT(a, b)` | `a > b` |
+| Greater/equal | `BOOST_CHECK_GE(a, b)` | `BOOST_REQUIRE_GE(a, b)` | `a >= b` |
+| Float close | `BOOST_CHECK_CLOSE(a, b, pct)` | `BOOST_REQUIRE_CLOSE(a, b, pct)` | Within `pct`% |
+| Near zero | `BOOST_CHECK_SMALL(a, tol)` | `BOOST_REQUIRE_SMALL(a, tol)` | `|a| < tol` |
+| Exception | `BOOST_CHECK_THROW(expr, T)` | `BOOST_REQUIRE_THROW(expr, T)` | Throws type T |
+| No throw | `BOOST_CHECK_NO_THROW(expr)` | `BOOST_REQUIRE_NO_THROW(expr)` | No exception |
+| Message | `BOOST_CHECK_MESSAGE(expr, msg)` | `BOOST_REQUIRE_MESSAGE(expr, msg)` | With custom message |
+| Universal | `BOOST_TEST(expr)` | — | Modern universal assertion (1.59+) |
+
+- `BOOST_CHECK_*` — non-fatal (test continues on failure)
+- `BOOST_REQUIRE_*` — fatal (test aborts on failure)
+- `BOOST_WARN_*` — warning only (test still passes)
+
+### Visual Studio project setup
+
+**Option A: Separate test project** (recommended)
+1. Add a Console App project to the solution
+2. Install Boost.Test via vcpkg or NuGet
+3. Delete the default `main()` (Boost.Test defines its own)
+4. Add `#define BOOST_TEST_MODULE` before the include
+5. Add project reference to the code under test
+
+**Option B: Tests inside the project**
+1. Add a Boost.Test item (Add → New Item → Visual C++ → Test → Boost.Test)
+2. Create a separate build configuration (e.g., "Debug UnitTests")
+3. Exclude test files from Debug/Release configs, exclude `main.cpp` from test config
+
+**Static library linking:** For static Boost.Test, set in vcxproj:
+- Vcpkg triplet: `x86-windows-static` (in `<VcpkgTriplet>` property)
+- Runtime Library: `/MTd` (debug) or `/MT` (release)
+
+### When to use Boost.Test vs alternatives
+
+| Use Boost.Test when | Use GoogleTest when | Use MS Native when |
+|--------------------|--------------------|-------------------|
+| Project already uses Boost heavily | Need gmock for mocking | Simple VS-only project, no mocking |
+| Cross-platform without GoogleTest dependency | Team familiar with gtest | Team prefers MS tooling |
+| Need data-driven via `boost::unit_test::data` | Need rich matchers (gmock) | Quick setup, no external deps |
+
 ## Common Compilation Errors
 
 | Error | Fix |
@@ -518,3 +643,5 @@ target_compile_definitions(my_tests PRIVATE UNIT_TESTING)
 | `fatal error C1083: 'CppUnitTest.h'` | Add `$(VCInstallDir)Auxiliary\VS\UnitTest\include` to Include Directories |
 | `LNK2019: unresolved external symbol` (test framework) | Add `$(VCInstallDir)Auxiliary\VS\UnitTest\lib` to Library Directories |
 | `LNK2019: unresolved external symbol` (code under test) | Add project reference, or add `.obj`/`.lib` to Linker → Additional Dependencies |
+| `LNK2005: _main already defined` (Boost.Test) | Boost.Test defines `main` — remove or exclude your own `main.cpp` from the test build config |
+| `fatal error: boost/test/unit_test.hpp: No such file` | Run `vcpkg install boost-test` and `vcpkg integrate install`, or add Boost include path manually |

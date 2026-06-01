@@ -24,6 +24,8 @@ Use whatever test style and layout the repo already uses. Do not introduce a dif
 | `*.vcxproj` with GoogleTest NuGet package or `packages.config` referencing `googletest` | GoogleTest via Visual Studio (MSBuild) |
 | `*.sln` containing a test project | Visual Studio solution — use `msbuild` or `dotnet build` |
 | `vcpkg.json` with `gtest` | vcpkg dependency management |
+| `vcpkg.json` with `boost-test` | Boost.Test via vcpkg |
+| `#include <boost/test/unit_test.hpp>` or `BOOST_TEST_MODULE` | Boost.Test framework |
 | `conanfile.txt` / `conanfile.py` with `gtest` | Conan dependency management |
 | `CMakePresets.json` | Build presets — use them for configure/build commands |
 | `BUILD.bazel` with `@googletest` | Bazel build system (use `bazel test` instead of CTest) |

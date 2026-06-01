@@ -1,14 +1,16 @@
 ---
 name: cpp-test-anti-patterns
 description: >
-  Audits existing C++ test code (GoogleTest, GoogleMock, Microsoft Native Test
-  Framework) for anti-patterns and quality issues — produces a severity-ranked
-  report (Critical / High / Medium / Low) with concrete code-level fixes.
-  INVOKE THIS SKILL when the user asks to audit, review, rank, or find problems
-  in existing C++ tests — including prompts about: "audit my C++ tests",
-  "review gtest quality", "are these tests good", leaked mocks, uninteresting
-  mock calls, no assertions, sleep in tests, shared global state, over-mocking
-  with gmock, test ordering dependencies, EXPECT vs ASSERT misuse.
+  Audits existing C++ test code (GoogleTest, GoogleMock, Boost.Test, Microsoft
+  Native Test Framework) for anti-patterns and quality issues — produces a
+  severity-ranked report (Critical / High / Medium / Low) with concrete
+  code-level fixes. INVOKE THIS SKILL when the user asks to audit, review,
+  rank, or find problems in existing C++ tests — including prompts about:
+  "audit my C++ tests", "review gtest quality", "review boost test quality",
+  "are these tests good", leaked mocks, uninteresting mock calls, no
+  assertions, sleep in tests, shared global state, over-mocking with gmock,
+  test ordering dependencies, EXPECT vs ASSERT misuse, BOOST_CHECK vs
+  BOOST_REQUIRE misuse.
   DO NOT USE FOR: writing new tests (use the code-testing pipeline agents);
   running tests (use run-cpp-tests); .NET tests (use test-anti-patterns).
 license: MIT
@@ -21,7 +23,7 @@ Quick, pragmatic analysis of C++ test code for anti-patterns and quality issues 
 ## When to Use
 
 - User asks to review C++ test quality or find test smells
-- User wants to know why GoogleTest/GoogleMock tests are flaky or unreliable
+- User wants to know why GoogleTest/GoogleMock or Boost.Test tests are flaky or unreliable
 - User asks "are my C++ tests good?" or "what's wrong with my tests?"
 - User requests a test audit or test code review for C++ code
 - User wants to improve existing C++ test code
@@ -45,7 +47,7 @@ Quick, pragmatic analysis of C++ test code for anti-patterns and quality issues 
 
 ### Step 1: Gather the test code
 
-Read the test files. Scan for files matching `*_test.cpp`, `*_test.cc`, `*Test.cpp`, or containing `#include <gtest/gtest.h>` / `#include "CppUnitTest.h"`.
+Read the test files. Scan for files matching `*_test.cpp`, `*_test.cc`, `*Test.cpp`, or containing `#include <gtest/gtest.h>`, `#include "CppUnitTest.h"`, or `#include <boost/test/unit_test.hpp>`.
 
 ### Step 2: Scan for anti-patterns
 
@@ -96,6 +98,18 @@ Read the test files. Scan for files matching `*_test.cpp`, `*_test.cc`, `*Test.c
 | **Inconsistent naming** | Mix of `TestSuiteName_TestName` styles in the same file. |
 | **Disabled tests without reason** | `DISABLED_TestName` without a comment explaining why or a tracking issue. |
 
+#### Boost.Test-Specific Anti-Patterns
+
+| Severity | Anti-Pattern | What to Look For |
+|---|---|---|
+| **Critical** | **Missing BOOST_TEST_MODULE** | No `#define BOOST_TEST_MODULE` before the include → linker error `LNK2005 _main already defined` or test binary that doesn't discover tests. |
+| **Critical** | **BOOST_CHECK where BOOST_REQUIRE needed** | `BOOST_CHECK(ptr != nullptr)` followed by `ptr->method()` — if check fails, execution continues and crashes. Use `BOOST_REQUIRE` for precondition guards. |
+| **High** | **BOOST_CHECK_EQUAL on floating-point** | `BOOST_CHECK_EQUAL(0.1 + 0.2, 0.3)` — will fail due to floating-point. Use `BOOST_CHECK_CLOSE` or `BOOST_CHECK_SMALL`. |
+| **High** | **Manual test registration** | Defining `test_suite* init_unit_test_suite(...)` when `BOOST_AUTO_TEST_CASE` / `BOOST_AUTO_TEST_SUITE` handles this automatically. |
+| **Medium** | **BOOST_WARN overuse** | `BOOST_WARN_*` never fails a test — it only logs. If you expect something to hold, use `BOOST_CHECK_*`. |
+| **Medium** | **Missing fixture cleanup** | `BOOST_FIXTURE_TEST_CASE` with a fixture that allocates but doesn't clean up in destructor — resources leak across tests. |
+| **Low** | **Static linking main.cpp in test project** | Including a `main()` alongside Boost.Test header module — causes `LNK2005`. Boost defines its own `main` when using the header-only variant with `BOOST_TEST_MODULE`. |
+
 ### Step 3: Calibrate severity
 
 - **Critical/High**: Issues that cause false passes or flakiness.
@@ -136,3 +150,5 @@ If the tests are well-written, say so up front.
 | Missing GoogleMock-specific patterns | Check for `EXPECT_CALL` ordering, `ON_CALL` vs `EXPECT_CALL` confusion, `WillOnce`/`WillRepeatedly` misuse |
 | Flagging parameterized test verbosity | `TEST_P` with `INSTANTIATE_TEST_SUITE_P` is intentionally verbose — it's the correct pattern |
 | Not checking for `testing::InitGoogleTest` | Missing initialization causes all `--gtest_*` flags to be silently ignored |
+| Flagging `BOOST_WARN` as always wrong | `BOOST_WARN` is appropriate for non-critical optional checks that should not fail the test |
+| Not recognizing Boost.Test severity model | Boost uses three levels (WARN/CHECK/REQUIRE) — each is valid in the right context |

@@ -2,7 +2,7 @@
 name: cpp-assertion-quality
 description: >
   Analyzes the variety and depth of assertions across C++ test suites
-  (GoogleTest, GoogleMock, Microsoft Native Test Framework). Use when the
+  (GoogleTest, GoogleMock, Boost.Test, Microsoft Native Test Framework). Use when the
   user asks to evaluate assertion quality in C++ tests, find shallow testing,
   identify assertion-free tests, measure assertion diversity, or audit whether
   tests verify different facets of correctness. Produces metrics and actionable
@@ -77,7 +77,24 @@ For each test method, identify all assertions and classify them:
 | **Exception** | `Assert::ExpectException<T>` | Error handling |
 | **Tolerance** | `Assert::AreEqual(expected, actual, tolerance)` | Float/double approximation |
 | **Unconditional** | `Assert::Fail` | Force failure |
+#### Boost.Test assertion categories
 
+| Category | Examples | What it verifies |
+|----------|---------|------------------|
+| **Equality** | `BOOST_CHECK_EQUAL`, `BOOST_CHECK_NE`, `BOOST_REQUIRE_EQUAL` | Value equality/inequality |
+| **Boolean** | `BOOST_CHECK(expr)`, `BOOST_REQUIRE(expr)` | Condition holds |
+| **Comparison** | `BOOST_CHECK_LT`, `BOOST_CHECK_LE`, `BOOST_CHECK_GT`, `BOOST_CHECK_GE` | Ordering |
+| **Floating-point** | `BOOST_CHECK_CLOSE(a, b, pct)`, `BOOST_CHECK_SMALL(a, tol)` | Approximate equality |
+| **Exception** | `BOOST_CHECK_THROW(expr, T)`, `BOOST_CHECK_NO_THROW(expr)` | Error handling |
+| **Message** | `BOOST_CHECK_MESSAGE(expr, msg)` | Condition with diagnostic |
+| **Universal** | `BOOST_TEST(expr)` | Modern all-in-one (1.59+) |
+| **Unconditional** | `BOOST_FAIL(msg)` | Force failure |
+| **Warning** | `BOOST_WARN(expr)`, `BOOST_WARN_EQUAL(a, b)` | Non-failing diagnostic |
+
+**Boost.Test severity levels:**
+- `BOOST_WARN_*` — warning only (test still passes)
+- `BOOST_CHECK_*` — non-fatal (test continues, reports failure)
+- `BOOST_REQUIRE_*` — fatal (test aborts on failure)
 ### Step 3: Compute metrics
 
 #### Per-test metrics

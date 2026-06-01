@@ -267,3 +267,37 @@ vstest.console.exe NativeTests.dll /TestCaseFilter:"ClassName=CalculatorTests&Pr
 | `TEST_PRIORITY(n)` | `Priority` |
 | `TEST_METHOD_ATTRIBUTE(L"Category", L"value")` | `Category` |
 | `TEST_METHOD_ATTRIBUTE(L"key", L"value")` | `key` |
+
+### Boost.Test filters (vstest via Boost.Test Adapter)
+
+Boost.Test tests are discoverable via the Boost.Test Adapter (included with "Desktop development with C++" workload in VS 2017+). Tests use standard vstest `TestCaseFilter` syntax.
+
+#### Test name mapping
+
+| Boost.Test concept | vstest property | Example value |
+|---|---|---|
+| `BOOST_AUTO_TEST_SUITE(Suite)/BOOST_AUTO_TEST_CASE(Test)` | `FullyQualifiedName` | `Suite/Test` |
+| Test case name | `Name` | `Test` |
+| Suite name | `ClassName` | `Suite` |
+| Nested suites: `Outer/Inner/Test` | `FullyQualifiedName` | `Outer/Inner/Test` |
+
+#### Filter examples
+
+```bash
+# Run all tests in a suite
+vstest.console.exe MyBoostTests.exe /TestCaseFilter:"ClassName=CalculatorTests"
+
+# Run a specific test
+vstest.console.exe MyBoostTests.exe /TestCaseFilter:"FullyQualifiedName=CalculatorTests/Add_TwoPositiveNumbers"
+
+# Substring match
+vstest.console.exe MyBoostTests.exe /TestCaseFilter:"Name~Add"
+
+# Exclude a suite
+vstest.console.exe MyBoostTests.exe /TestCaseFilter:"ClassName!=SlowTests"
+
+# Via dotnet test
+dotnet test MySolution.sln --filter "ClassName=CalculatorTests"
+```
+
+**Note:** Unlike GoogleTest (DLL output), Boost.Test typically produces an EXE. The adapter discovers tests from `.exe` files matching the test discovery regex. Configure via Tools → Options → Test Adapter for Boost.Test.
