@@ -627,6 +627,135 @@ BOOST_DATA_TEST_CASE(Add_MultipleInputs,
 | Cross-platform without GoogleTest dependency | Team familiar with gtest | Team prefers MS tooling |
 | Need data-driven via `boost::unit_test::data` | Need rich matchers (gmock) | Quick setup, no external deps |
 
+## Google C++ Style Guide — Test & Mock Conventions
+
+The [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html) contains several rules that directly affect how tests and mocks are written. Apply these when working in codebases that follow Google style.
+
+### Test file naming
+
+- Use `_test.cc` suffix: `foo_bar_test.cc` (not `_unittest.cc` or `_regtest.cc` — those are deprecated)
+- Filenames are all lowercase with underscores
+
+### Include order in test files
+
+In `dir/foo_test.cc` testing `dir2/foo.h`, order includes as:
+
+1. `dir2/foo.h` (the header under test — **always first**)
+2. C system headers (e.g., `<unistd.h>`)
+3. C++ standard library headers (e.g., `<string>`, `<vector>`)
+4. Other libraries' headers (e.g., `<gmock/gmock.h>`, `<gtest/gtest.h>`)
+5. Your project's headers
+
+Separate each group with a blank line. Placing the header under test first ensures that missing includes in that header are caught immediately.
+
+### Access control in test fixtures
+
+- Class data members must be `private` in production code
+- **Exception for tests:** data members of a test fixture class defined in a `.cc` file may be `protected` when using GoogleTest (so `TEST_F` can access them)
+- If the fixture is defined in a `.h` file, keep data members `private`
+
+```cpp
+// In foo_test.cc — protected is allowed here
+class FooTest : public ::testing::Test {
+protected:
+    Foo foo_;                    // OK — test fixture in .cc file
+    std::string test_data_;
+};
+```
+
+### Using `friend` for testing
+
+- A unit test class may be declared as a `friend` of the class it tests
+- Friends should be defined in the same file so the reader can find all private-member access
+- Prefer testing through the public API; use `friend` only when necessary
+
+```cpp
+class Foo {
+    friend class FooTest;  // Grant test access to internals
+    FRIEND_TEST(FooTest, InternalStateIsConsistent);  // GoogleTest macro
+    int internal_state_;
+};
+```
+
+### Virtual destructors and `override` (critical for mocks)
+
+- Base class destructors **must** be `virtual` for mocks to work correctly (prevents undefined behavior when deleting through base pointer)
+- Always annotate overrides with `override` (never re-state `virtual` on the override)
+- The compiler will error if a method marked `override` doesn't actually override a base virtual — this catches mock method signature mismatches
+
+```cpp
+class Database {
+public:
+    virtual ~Database() = default;                        // MUST be virtual
+    virtual bool Connect(const std::string& url) = 0;
+};
+
+class MockDatabase : public Database {
+public:
+    MOCK_METHOD(bool, Connect, (const std::string& url), (override));  // use override
+};
+```
+
+### RTTI in tests
+
+- `dynamic_cast` and `typeid` may be used freely in unit tests
+- Useful for verifying that a factory returns the expected dynamic type
+- Useful for managing relationships between objects and their mocks
+
+```cpp
+TEST(FactoryTest, CreateWidget_ReturnsConcreteWidget) {
+    auto widget = factory.Create("fancy");
+    ASSERT_NE(dynamic_cast<FancyWidget*>(widget.get()), nullptr);
+}
+```
+
+### Naming conventions for test code
+
+| Entity | Convention | Example |
+|--------|-----------|---------|
+| Test fixture class | PascalCase (type name) | `FooBarTest` |
+| Mock class | PascalCase with `Mock` prefix | `MockDatabase` |
+| Test suite / fixture | PascalCase | `CalculatorTest` |
+| Test name (in `TEST`/`TEST_F`) | PascalCase | `Add_TwoPositives_ReturnsSum` |
+| Helper functions in tests | PascalCase | `CreateTestWidget()` |
+| Local variables in tests | snake_case | `expected_result` |
+| Fixture data members | snake_case with trailing `_` (class) or without (struct) | `mock_db_` |
+| Constants | `k` + PascalCase | `kDefaultTimeout` |
+
+### `explicit` constructors in test helpers
+
+- Single-argument constructors must be marked `explicit` (prevents accidental implicit conversions in test setup code)
+- Applies to custom test helper types, fake implementations, and builder objects
+
+```cpp
+class FakeConnection {
+public:
+    explicit FakeConnection(int port);  // Prevents FakeConnection c = 8080;
+};
+```
+
+### Avoid exceptions in production mocks
+
+- Google style forbids C++ exceptions in production code
+- Mock actions should use `Return()`, error codes, or `std::optional` — not `Throw()` — unless the codebase explicitly enables exceptions
+- In test-only code that never ships, `EXPECT_THROW` / `Throw()` may still be used if the code under test uses exceptions
+
+### Lambda captures in test callbacks
+
+- Prefer explicit captures (`[&mock, &result]`) over default capture (`[&]`) when the lambda escapes the current scope or is passed to async code
+- For short, non-escaping lambdas within a single test, default capture by reference is acceptable
+
+```cpp
+// OK — short lambda, clearly bounded scope
+EXPECT_CALL(mock, Process).WillOnce([&](int x) { return x * 2; });
+
+// Prefer explicit capture when lambda could outlive local variables
+auto callback = [&result, &latch](Status s) {
+    result = s;
+    latch.CountDown();
+};
+```
+
 ## Common Compilation Errors
 
 | Error | Fix |
