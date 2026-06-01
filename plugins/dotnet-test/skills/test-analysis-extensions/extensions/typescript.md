@@ -126,4 +126,4 @@ Only switch to `auto-edit` mode when the project already follows one of these co
 - **`xit`/`xdescribe`** are commits of disabled tests — flag like `[Ignore]`.
 - **`.only`** committed to source is a critical smell — silently disables the rest of the file/suite.
 - **describe.each / test.each** are parametrized; not duplicate tests.
-- **`fail()` is removed in Jest 27+** — flag `if (cond) fail('msg')` patterns and recommend `expect.fail()` or explicit conditions.
+- **`fail()` is removed in Jest 27+** — flag `if (cond) fail('msg')` patterns and recommend `throw new Error('msg')` or an explicit failing assertion such as `expect(value).toBe(...)` instead.

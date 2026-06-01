@@ -11,7 +11,7 @@ Reference data for analyzing C++ test code. Used by the polyglot test analysis s
 | Sleep/delay detection | Strong — `std::this_thread::sleep_for`, `sleep()`, `Sleep()` |
 | Skip/ignore detection | Moderate — `GTEST_SKIP()`, `DISABLED_` prefix, `[!hide]` tags |
 | Setup/teardown detection | Strong — `SetUp`/`TearDown`, fixtures, sections |
-| Tag support | **auto-edit** for Catch2/doctest (`[tag]` syntax); GoogleTest uses test-name prefix conventions |
+| Tag support | **auto-edit** — Catch2 uses `[tag]` syntax inside `TEST_CASE`; doctest uses `* doctest::test_suite("tag")` decorator chains; GoogleTest uses test-name prefix conventions (treat as `convention-based`) |
 
 ## Test File Identification
 

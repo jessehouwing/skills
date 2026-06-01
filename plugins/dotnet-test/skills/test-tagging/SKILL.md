@@ -1,6 +1,6 @@
 ---
 name: test-tagging
-description: "Analyzes test suites in any language and tags each test with a standardized set of traits (e.g., positive, negative, critical-path, boundary, smoke, regression, integration, performance, security). Use when the user wants to categorize, audit, or label tests with traits. Works with .NET (MSTest TestCategory / xUnit Trait / NUnit Category / TUnit Property), Python (pytest markers / unittest tags), TypeScript/JavaScript (Jest/Vitest test names, describe-block conventions), Java (JUnit 5 @Tag / TestNG groups), Go (subtest naming / build tags / file _test.go), Ruby (RSpec metadata), Rust (cargo test naming / cfg attributes), Swift (XCTest test plans / Swift Testing @Tag), Kotlin (JUnit @Tag / Kotest tags), PowerShell (Pester -Tag), and C++ (GoogleTest filter prefixes / Catch2 [tags] / doctest tags). Auto-edits when the framework has canonical syntax; falls back to report-only when no canonical syntax exists. Do not use for writing new tests, running tests, or migrating test frameworks."
+description: "Analyzes test suites in any language and tags each test with a standardized set of traits (positive, negative, critical-path, boundary, smoke, regression, integration, performance, security). Use when the user wants to categorize, audit, or label tests with traits. Works with .NET (MSTest TestCategory / xUnit Trait / NUnit Category / TUnit Property), Python (pytest markers; unittest has no canonical tag syntax so report-only), TypeScript/JavaScript (Jest/Vitest test names, describe-block conventions), Java (JUnit 5 @Tag / TestNG groups), Go (subtest naming / build tags / file _test.go), Ruby (RSpec metadata), Rust (cargo test naming / cfg attributes), Swift (XCTest test plans / Swift Testing @Tag), Kotlin (JUnit @Tag / Kotest tags), PowerShell (Pester -Tag), C++ (GoogleTest filter prefixes / Catch2 [tags] / doctest decorators). Auto-edits when the framework has canonical syntax; falls back to report-only otherwise. Do not use for writing new tests, running tests, or migrating frameworks."
 license: MIT
 ---
 
@@ -61,7 +61,7 @@ A single test may have **multiple traits** (e.g., both `negative` and `boundary`
 
 Identify the codebase's language and test framework. Call the `test-analysis-extensions` skill and read the matching extension file. The extension file declares a **tag-support capability** for each framework:
 
-- **`auto-edit`** — framework has canonical tag syntax this skill can safely insert (.NET `[TestCategory]` / `[Trait]` / `[Category]` / `[Property]`, pytest `@pytest.mark.<name>`, JUnit 5 `@Tag("...")`, TestNG `groups = {"..."}`, RSpec metadata `it "..." , :tag => true`, Pester `-Tag '...'`, Kotest `@Tags(...)`, Swift Testing `@Tag(.tagName)`, Catch2 `[tag]`, doctest `*[tag]`).
+- **`auto-edit`** — framework has canonical tag syntax this skill can safely insert (.NET `[TestCategory]` / `[Trait]` / `[Category]` / `[Property]`, pytest `@pytest.mark.<name>`, JUnit 5 `@Tag("...")`, TestNG `groups = {"..."}`, RSpec metadata `it "..." , :tag => true`, Pester `-Tag '...'`, Kotest `@Tags(...)`, Swift Testing `@Tag(.tagName)`, Catch2 `[tag]`, doctest `* doctest::test_suite("tag")` decorator).
 - **`report-only`** — framework has no canonical, agreed-upon tag attribute; report tags in a Markdown table only and do not edit source (Go standard `testing` without build-tag conventions, Jest/Vitest without consistent describe-prefix convention, Rust without project-specific cfg conventions, XCTest without a test plan, GoogleTest without test-name prefix conventions, Mocha without describe-prefix conventions).
 - **`convention-based`** — framework uses naming or file conventions for tagging (Go `//go:build integration` build tags, file-name suffixes like `*_integration_test.go`, GoogleTest `INTEGRATION_*` filter prefix). Only emit canonical edits when the user has confirmed the project convention; otherwise treat as `report-only`.
 
@@ -85,7 +85,7 @@ Check which tests already have trait attributes. Use the loaded language extensi
 | Kotest | `@Tags(...)` | `@Tags(Positive)` |
 | Swift Testing | `@Tag(.<name>)` | `@Test(.tags(.positive))` |
 | Catch2 | `[tag]` in name | `TEST_CASE("...", "[positive]")` |
-| doctest | `*[tag]` | `TEST_CASE("..." *doctest::test_suite("positive"))` |
+| doctest | `* doctest::test_suite("...")` decorator | `TEST_CASE("..." *doctest::test_suite("positive"))` |
 
 Record which tests already have tags to avoid duplication.
 
